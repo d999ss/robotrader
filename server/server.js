@@ -38,26 +38,43 @@ const mongooseOptions = {
   minPoolSize: 5,
   maxIdleTimeMS: 120000,
   waitQueueTimeoutMS: 30000,
-  heartbeatFrequencyMS: 10000
+  heartbeatFrequencyMS: 10000,
+  retryWrites: true,
+  w: 'majority',
+  family: 4 // Force IPv4
 };
 
-// Create connection
-mongoose.connect(MONGODB_URI, mongooseOptions)
-  .then(() => {
-    console.log('Connected to MongoDB successfully');
-    // Test the connection by running a simple query
-    return mongoose.connection.db.admin().ping();
-  })
-  .then(() => {
-    console.log('MongoDB ping successful - database is responsive');
-  })
+// Function to connect with retries
+const connectWithRetry = async (retries = 5, interval = 5000) => {
+  for (let i = 0; i < retries; i++) {
+    try {
+      console.log(`MongoDB connection attempt ${i + 1} of ${retries}`);
+      await mongoose.connect(MONGODB_URI, mongooseOptions);
+      console.log('Connected to MongoDB successfully');
+      // Test the connection
+      await mongoose.connection.db.admin().ping();
+      console.log('MongoDB ping successful - database is responsive');
+      return; // Connection successful, exit the function
+    } catch (err) {
+      console.error(`Connection attempt ${i + 1} failed:`, {
+        name: err.name,
+        message: err.message,
+        code: err.code
+      });
+      if (i < retries - 1) {
+        console.log(`Retrying in ${interval/1000} seconds...`);
+        await new Promise(resolve => setTimeout(resolve, interval));
+      }
+    }
+  }
+  throw new Error(`Failed to connect to MongoDB after ${retries} attempts`);
+};
+
+// Initial connection
+connectWithRetry()
   .catch(err => {
-    console.error('MongoDB connection error details:', {
-      name: err.name,
-      message: err.message,
-      code: err.code,
-      stack: err.stack
-    });
+    console.error('All MongoDB connection attempts failed:', err);
+    process.exit(1); // Exit if we can't connect after all retries
   });
 
 // Handle MongoDB connection events
@@ -76,6 +93,11 @@ mongoose.connection.on('error', (err) => {
 
 mongoose.connection.on('disconnected', () => {
   console.log('Mongoose disconnected from MongoDB');
+  // Attempt to reconnect
+  console.log('Attempting to reconnect...');
+  connectWithRetry(3, 5000).catch(err => {
+    console.error('Failed to reconnect:', err);
+  });
 });
 
 // Handle process termination
