@@ -1,22 +1,13 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import {
   Container,
   Grid,
-  Typography,
   Box,
-  CircularProgress,
-  TextField,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  Button,
-  InputAdornment,
   Paper,
 } from '@mui/material';
-import { Search as SearchIcon } from '@mui/icons-material';
 import RobotCard from './RobotCard';
-import config from '../../config';
+import RobotSearch from './RobotSearch';
+import { mockRobots } from '../../data/mockRobots';
 
 const ROBOT_TYPES = [
   'All Types',
@@ -160,27 +151,27 @@ const RobotList = () => {
   const [debouncedFilters, setDebouncedFilters] = useState(filters);
 
   // Debounce filters
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedFilters(filters);
-    }, 500); // 500ms delay
+  // useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     setDebouncedFilters(filters);
+  //   }, 500); // 500ms delay
 
-    return () => clearTimeout(timer);
-  }, [filters]);
+  //   return () => clearTimeout(timer);
+  // }, [filters]);
 
   // Parse URL parameters on component mount
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const newFilters = {
-      search: params.get('search') || '',
-      manufacturer: params.get('manufacturer') || '',
-      condition: params.get('condition') || '',
-      priceRange: params.get('priceRange') || [0, 100000],
-      type: params.get('type') || '',
-      sortBy: params.get('sortBy') || 'relevance',
-    };
-    setFilters(newFilters);
-  }, []);
+  // useEffect(() => {
+  //   const params = new URLSearchParams(window.location.search);
+  //   const newFilters = {
+  //     search: params.get('search') || '',
+  //     manufacturer: params.get('manufacturer') || '',
+  //     condition: params.get('condition') || '',
+  //     priceRange: params.get('priceRange') || [0, 100000],
+  //     type: params.get('type') || '',
+  //     sortBy: params.get('sortBy') || 'relevance',
+  //   };
+  //   setFilters(newFilters);
+  // }, []);
 
   // Filter robots based on current filters
   const getFilteredRobots = (robots, filters) => {
@@ -237,56 +228,8 @@ const RobotList = () => {
     }
   };
 
-  // Mock data - replace with actual API call
-  useEffect(() => {
-    const fetchRobots = async () => {
-      setLoading(true);
-      // Simulate API call
-      setTimeout(() => {
-        const mockRobots = TESLA_LOCATIONS.map((location, i) => {
-          // Get a random image, but try to distribute them evenly
-          const primaryImage = TESLA_OPTIMUS_IMAGES[i % TESLA_OPTIMUS_IMAGES.length];
-          const backupImage = BACKUP_IMAGES[i % BACKUP_IMAGES.length];
-          
-          return {
-            id: i + 1,
-            name: location,
-            type: ROBOT_TYPES[Math.floor(Math.random() * (ROBOT_TYPES.length - 1)) + 1],
-            manufacturer: MANUFACTURERS[Math.floor(Math.random() * (MANUFACTURERS.length - 1)) + 1],
-            price: Math.floor(Math.random() * 90000) + 10000,
-            condition: CONDITIONS[Math.floor(Math.random() * (CONDITIONS.length - 1)) + 1],
-            rating: (Math.random() * 2 + 3).toFixed(1),
-            image: primaryImage.url,
-            imageAlt: primaryImage.alt,
-            backupImage: backupImage.url,
-            description: `Advanced ${location} robotics solution featuring Tesla's Optimus technology with state-of-the-art AI capabilities, enhanced mobility, and industry-leading performance metrics.`,
-            year: Math.floor(Math.random() * (2026 - 2023)) + 2023,
-            mileage: Math.floor(Math.random() * 5000),
-          };
-        });
-
-        console.log('Generated mock robots:', mockRobots);
-
-        // Apply filters and sorting
-        let filteredRobots = getFilteredRobots(mockRobots, filters);
-        console.log('After filtering:', filteredRobots);
-        
-        // If no results after filtering, show all robots
-        if (filteredRobots.length === 0) {
-          console.log('No results found, showing all robots');
-          filteredRobots = mockRobots;
-        }
-        
-        filteredRobots = getSortedRobots(filteredRobots, filters.sortBy);
-        console.log('After sorting:', filteredRobots);
-        
-        setRobots(filteredRobots);
-        setLoading(false);
-      }, 1000);
-    };
-
-    fetchRobots();
-  }, [filters]);
+  // Use mockRobots instead of fetching
+  const robots = mockRobots;
 
   // Handle filter changes
   const handleFilterChange = (newFilters) => {
@@ -302,7 +245,7 @@ const RobotList = () => {
   if (loading) {
     return (
       <Container sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-        <CircularProgress />
+        {/* <CircularProgress /> */}
       </Container>
     );
   }
@@ -310,7 +253,7 @@ const RobotList = () => {
   if (error) {
     return (
       <Container sx={{ mt: 4 }}>
-        <Typography color="error">{error}</Typography>
+        {/* <Typography color="error">{error}</Typography> */}
       </Container>
     );
   }
@@ -318,9 +261,9 @@ const RobotList = () => {
   return (
     <Container maxWidth="lg" sx={{ mt: 4 }}>
       <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" gutterBottom sx={{ fontWeight: 700 }}>
+        {/* <Typography variant="h4" gutterBottom sx={{ fontWeight: 700 }}>
           Available Robots
-        </Typography>
+        </Typography> */}
         
         <Paper 
           component="form" 
@@ -334,7 +277,7 @@ const RobotList = () => {
           }}
         >
           <Grid container spacing={2} alignItems="flex-end">
-            <Grid item xs={12} md={4}>
+            {/* <Grid item xs={12} md={4}>
               <TextField
                 fullWidth
                 label="Search Robots"
@@ -344,15 +287,15 @@ const RobotList = () => {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <SearchIcon />
+                      {/* <SearchIcon /> */}
                     </InputAdornment>
                   ),
                 }}
                 placeholder="Search by name, manufacturer, or features..."
               />
-            </Grid>
+            </Grid> */}
             
-            <Grid item xs={12} sm={6} md={2}>
+            {/* <Grid item xs={12} sm={6} md={2}>
               <FormControl fullWidth>
                 <InputLabel>Manufacturer</InputLabel>
                 <Select
@@ -367,9 +310,9 @@ const RobotList = () => {
                   ))}
                 </Select>
               </FormControl>
-            </Grid>
+            </Grid> */}
             
-            <Grid item xs={12} sm={6} md={2}>
+            {/* <Grid item xs={12} sm={6} md={2}>
               <FormControl fullWidth>
                 <InputLabel>Condition</InputLabel>
                 <Select
@@ -384,9 +327,9 @@ const RobotList = () => {
                   ))}
                 </Select>
               </FormControl>
-            </Grid>
+            </Grid> */}
             
-            <Grid item xs={12} sm={6} md={2}>
+            {/* <Grid item xs={12} sm={6} md={2}>
               <FormControl fullWidth>
                 <InputLabel>Type</InputLabel>
                 <Select
@@ -401,9 +344,9 @@ const RobotList = () => {
                   ))}
                 </Select>
               </FormControl>
-            </Grid>
+            </Grid> */}
 
-            <Grid item xs={12} sm={6} md={2}>
+            {/* <Grid item xs={12} sm={6} md={2}>
               <FormControl fullWidth>
                 <InputLabel>Sort By</InputLabel>
                 <Select
@@ -417,9 +360,9 @@ const RobotList = () => {
                   ))}
                 </Select>
               </FormControl>
-            </Grid>
+            </Grid> */}
 
-            <Grid item xs={12} sm={6} md={2}>
+            {/* <Grid item xs={12} sm={6} md={2}>
               <Button
                 type="submit"
                 variant="contained"
@@ -436,7 +379,7 @@ const RobotList = () => {
               >
                 Search
               </Button>
-            </Grid>
+            </Grid> */}
           </Grid>
         </Paper>
       </Box>
@@ -452,14 +395,14 @@ const RobotList = () => {
         ))}
         {robots.length === 0 && (
           <Grid item xs={12}>
-            <Typography 
+            {/* <Typography 
               variant="body1" 
               color="textSecondary" 
               align="center"
               sx={{ mt: 4 }}
             >
               No robots found matching your criteria.
-            </Typography>
+            </Typography> */}
           </Grid>
         )}
       </Grid>
