@@ -8,7 +8,7 @@ services:
       - key: NODE_ENV
         value: production
       - key: MONGODB_URI
-        value: mongodb+srv://robotrader_user:Rbt7%23mK9pL2%24vN4@cluster0.ibog1.mongodb.net/robotrader
+        value: mongodb+srv://robotrader_user:Rbt7%23mK9pL2%24vN4@cluster0.ibog1.mongodb.net/robotrader?directConnection=true&retryWrites=true&w=majority
       - key: JWT_SECRET
         sync: false
       - key: CORS_ORIGIN
