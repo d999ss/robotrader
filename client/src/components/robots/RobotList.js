@@ -56,15 +56,41 @@ const RobotList = () => {
       }
 
       console.log('Fetching robots from:', url); // Debug log
+      
       const response = await fetch(url);
-      if (!response.ok) throw new Error('Failed to fetch robots');
-      const data = await response.json();
-      console.log('Received robots:', data); // Debug log
+      console.log('Response status:', response.status); // Debug log
+      
+      const responseText = await response.text();
+      console.log('Raw response:', responseText); // Debug log
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch robots: ${response.status} ${responseText}`);
+      }
+      
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('Error parsing response:', parseError);
+        throw new Error('Invalid response format from server');
+      }
+      
+      console.log('Parsed robots data:', data); // Debug log
+      
+      if (!Array.isArray(data)) {
+        console.error('Expected array of robots, got:', typeof data);
+        throw new Error('Invalid data format from server');
+      }
+      
       setRobots(data);
       setError('');
     } catch (err) {
-      console.error('Error fetching robots:', err);
-      setError('Failed to fetch robots. Please try again later.');
+      console.error('Error details:', {
+        message: err.message,
+        stack: err.stack,
+        name: err.name
+      });
+      setError(`Error: ${err.message}`);
     } finally {
       setLoading(false);
     }

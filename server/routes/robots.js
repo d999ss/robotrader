@@ -6,78 +6,74 @@ const mongoose = require('mongoose');
 
 // Get all robots with filtering
 router.get('/', async (req, res) => {
+  console.log('GET /api/robots request received');
+  console.log('MongoDB connection state:', mongoose.connection.readyState);
+  
   try {
-    // Check MongoDB connection state
+    // Check database connection
     if (mongoose.connection.readyState !== 1) {
-      console.error('MongoDB not connected. Current state:', mongoose.connection.readyState);
-      return res.status(500).json({ 
+      console.error('Database not connected. Current state:', mongoose.connection.readyState);
+      return res.status(503).json({
         message: 'Database connection not ready',
         state: mongoose.connection.readyState
       });
     }
 
-    console.log('Received request to /api/robots');
-    console.log('MongoDB connection state:', mongoose.connection.readyState);
-    console.log('Received query:', req.query); // Debug log
-    const filters = {};
-    
-    // Text search
+    // Build query
+    const query = {};
+    console.log('Query parameters:', req.query);
+
     if (req.query.search) {
-      filters.$or = [
+      query.$or = [
         { name: { $regex: req.query.search, $options: 'i' } },
-        { manufacturer: { $regex: req.query.search, $options: 'i' } },
-        { description: { $regex: req.query.search, $options: 'i' } },
-        { features: { $regex: req.query.search, $options: 'i' } }
+        { description: { $regex: req.query.search, $options: 'i' } }
       ];
     }
-
-    // Other filters
-    if (req.query.manufacturer) filters.manufacturer = req.query.manufacturer;
-    if (req.query.condition) filters.condition = req.query.condition;
-    
-    // Price range
+    if (req.query.manufacturer) {
+      query.manufacturer = req.query.manufacturer;
+    }
+    if (req.query.condition) {
+      query.condition = req.query.condition;
+    }
     if (req.query.priceRange) {
+      // Implement price range filtering
       const [min, max] = req.query.priceRange.split('-').map(Number);
-      filters.price = { $gte: min, $lte: max };
+      query.price = { $gte: min, $lte: max };
     }
 
-    console.log('Applied filters:', filters); // Debug log
-    
-    // Set timeout and options for the query
-    const queryOptions = {
-      maxTimeMS: 20000, // 20 second timeout
-      lean: true // Convert to plain JavaScript objects
-    };
-    
-    console.log('Executing Robot.find()...');
-    const robots = await Robot.find(filters)
-      .setOptions(queryOptions)
-      .sort({ createdAt: -1 })
-      .populate('seller', 'name ratings')
+    console.log('Final MongoDB query:', JSON.stringify(query, null, 2));
+
+    // Set timeout for the query
+    const timeout = 30000;
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Query timed out')), timeout)
+    );
+
+    // Execute query with timeout
+    const queryPromise = Robot.find(query)
+      .select('-__v')
+      .lean()
       .exec();
-    
-    console.log(`Found ${robots.length} robots`); // Debug log
+
+    const robots = await Promise.race([queryPromise, timeoutPromise]);
+    console.log(`Found ${robots.length} robots`);
+
     res.json(robots);
-  } catch (error) {
-    console.error('Error in /api/robots:', {
-      name: error.name,
-      message: error.message,
-      code: error.code,
-      stack: error.stack
+  } catch (err) {
+    console.error('Error in GET /api/robots:', {
+      name: err.name,
+      message: err.message,
+      stack: err.stack,
+      code: err.code
     });
-    
+
     // Send appropriate error response
-    if (error.name === 'MongooseError' || error.name === 'MongoError') {
-      res.status(500).json({ 
-        message: 'Database error occurred',
-        error: error.message,
-        code: error.code
-      });
+    if (err.message === 'Query timed out') {
+      res.status(504).json({ message: 'Request timed out' });
+    } else if (err.name === 'MongoError' || err.name === 'MongooseError') {
+      res.status(503).json({ message: 'Database error', error: err.message });
     } else {
-      res.status(500).json({ 
-        message: 'An unexpected error occurred',
-        error: error.message
-      });
+      res.status(500).json({ message: 'Internal server error', error: err.message });
     }
   }
 });
