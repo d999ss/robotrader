@@ -6,10 +6,9 @@ import {
   Button,
   Box,
   Grid,
-  Card,
-  CardMedia,
-  CardContent,
   Paper,
+  Card,
+  CardContent,
   useTheme,
   alpha,
 } from '@mui/material';
@@ -19,10 +18,13 @@ import {
   ArrowForward as ArrowForwardIcon,
 } from '@mui/icons-material';
 import RobotCard from '../robots/RobotCard';
+import { getRandomImage, ROBOT_IMAGES, getCategoryConfig, handleImageError } from '../../utils/imageUtils';
+import ImageLoader from '../common/ImageLoader';
 
 const HomePage = () => {
   const theme = useTheme();
   const navigate = useNavigate();
+  const heroConfig = getCategoryConfig('hero');
   const [featuredRobots, setFeaturedRobots] = useState([]);
 
   useEffect(() => {
@@ -40,7 +42,7 @@ const HomePage = () => {
             id: 1,
             name: 'Tesla Optimus Gen 2',
             price: 89999,
-            image: 'https://www.teslarati.com/wp-content/uploads/2023/12/tesla-optimus-gen-2-1024x576.jpg',
+            image: ROBOT_IMAGES.featured[0],
             description: 'Latest generation Tesla Optimus robot with enhanced mobility and AI capabilities.',
             rating: 4.9,
             condition: 'New'
@@ -49,7 +51,7 @@ const HomePage = () => {
             id: 2,
             name: 'Tesla Optimus Pro',
             price: 79999,
-            image: 'https://www.teslarati.com/wp-content/uploads/2023/12/tesla-optimus-gen-2-walking.jpg',
+            image: ROBOT_IMAGES.featured[1],
             description: 'Professional grade Tesla Optimus with advanced industrial applications.',
             rating: 4.8,
             condition: 'New'
@@ -58,7 +60,7 @@ const HomePage = () => {
             id: 3,
             name: 'Tesla Optimus Lite',
             price: 69999,
-            image: 'https://www.teslarati.com/wp-content/uploads/2023/12/tesla-optimus-gen-2-hands.jpg',
+            image: ROBOT_IMAGES.featured[2],
             description: 'Entry-level Tesla Optimus perfect for home and small business use.',
             rating: 4.7,
             condition: 'New'
@@ -73,102 +75,114 @@ const HomePage = () => {
   return (
     <Box>
       {/* Hero Section */}
-      <Paper
+      <Box
         sx={{
           position: 'relative',
-          backgroundColor: 'grey.800',
-          color: '#fff',
-          mb: 4,
-          backgroundSize: 'cover',
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'center',
-          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(https://www.teslarati.com/wp-content/uploads/2023/12/tesla-optimus-gen-2-1024x576.jpg)`,
           height: '70vh',
           display: 'flex',
           alignItems: 'center',
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            zIndex: 1,
+          },
         }}
       >
-        <Container maxWidth="lg">
-          <Box sx={{ p: { xs: 3, md: 6 } }}>
-            <Typography
-              component="h1"
-              variant="h2"
-              color="inherit"
-              gutterBottom
-              sx={{
-                fontWeight: 700,
-                textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
-              }}
-            >
+        {/* Hero Background Image */}
+        <Box sx={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0 }}>
+          <ImageLoader
+            src={ROBOT_IMAGES.hero[0]}
+            alt="RoboTrader Hero"
+            category="hero"
+            width="100%"
+            height="100%"
+            objectFit="cover"
+            quality="high"
+            priority={true}
+          />
+        </Box>
+
+        {/* Hero Content */}
+        <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 2 }}>
+          <Box sx={{ color: 'white', textAlign: 'center' }}>
+            <Typography variant="h2" component="h1" gutterBottom>
               Welcome to RoboTrader
             </Typography>
-            <Typography
-              variant="h5"
-              color="inherit"
-              paragraph
-              sx={{
-                maxWidth: '600px',
-                mb: 4,
-                textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
-              }}
-            >
-              Your premier marketplace for Tesla Optimus robots. Buy and sell the future of automation with confidence.
+            <Typography variant="h5" gutterBottom sx={{ mb: 4 }}>
+              Your Marketplace for Advanced Trading Robots
             </Typography>
-            <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+            <Box sx={{ '& > :not(style)': { m: 1 } }}>
               <Button
                 variant="contained"
                 size="large"
-                startIcon={<ExploreIcon />}
                 onClick={() => navigate('/robots')}
-                sx={{
-                  backgroundColor: theme.palette.primary.main,
-                  '&:hover': {
-                    backgroundColor: alpha(theme.palette.primary.main, 0.9),
-                  },
-                }}
+                sx={{ minWidth: 200 }}
               >
                 Browse Robots
               </Button>
               <Button
                 variant="outlined"
                 size="large"
-                startIcon={<AddCircleIcon />}
                 onClick={() => navigate('/create-listing')}
-                sx={{
-                  borderColor: '#fff',
-                  color: '#fff',
-                  '&:hover': {
-                    borderColor: alpha('#fff', 0.9),
-                    backgroundColor: alpha('#fff', 0.1),
-                  },
-                }}
+                sx={{ minWidth: 200, color: 'white', borderColor: 'white' }}
               >
                 Sell Your Robot
               </Button>
             </Box>
           </Box>
         </Container>
-      </Paper>
+      </Box>
 
       {/* Featured Robots Section */}
-      <Container maxWidth="lg" sx={{ mb: 8 }}>
-        <Box sx={{ mb: 4 }}>
-          <Typography variant="h4" component="h2" gutterBottom>
-            Featured Robots
-          </Typography>
-          <Typography variant="body1" color="text.secondary" paragraph>
-            Discover our top-rated Tesla Optimus robots, hand-picked for their exceptional quality and value.
-          </Typography>
-        </Box>
-
+      <Container maxWidth="lg" sx={{ my: 8 }}>
+        <Typography variant="h3" component="h2" gutterBottom align="center">
+          Featured Robots
+        </Typography>
         <Grid container spacing={4}>
           {featuredRobots.map((robot) => (
             <Grid item xs={12} sm={6} md={4} key={robot.id}>
-              <RobotCard robot={robot} />
+              <Card
+                sx={{
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  transition: '0.3s',
+                  '&:hover': {
+                    transform: 'translateY(-5px)',
+                    boxShadow: theme.shadows[10],
+                  },
+                }}
+              >
+                <Box sx={{ position: 'relative', paddingTop: '75%' /* 4:3 Aspect Ratio */ }}>
+                  <ImageLoader
+                    src={robot.image}
+                    alt={`Featured Robot ${robot.name}`}
+                    category="featured"
+                    width="100%"
+                    height="100%"
+                    objectFit="cover"
+                    quality="high"
+                    priority={true}
+                    sx={{ position: 'absolute', top: 0, left: 0 }}
+                  />
+                </Box>
+                <CardContent>
+                  <Typography gutterBottom variant="h5" component="h3">
+                    {robot.name}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {robot.description}
+                  </Typography>
+                </CardContent>
+              </Card>
             </Grid>
           ))}
         </Grid>
-
         <Box sx={{ mt: 4, textAlign: 'center' }}>
           <Button
             variant="outlined"
@@ -182,48 +196,48 @@ const HomePage = () => {
       </Container>
 
       {/* Why Choose Us Section */}
-      <Box sx={{ bgcolor: 'background.paper', py: 8 }}>
+      <Box sx={{ bgcolor: 'grey.100', py: 8 }}>
         <Container maxWidth="lg">
-          <Typography variant="h4" component="h2" gutterBottom align="center">
+          <Typography variant="h3" component="h2" gutterBottom align="center">
             Why Choose RoboTrader?
           </Typography>
-          <Grid container spacing={4} sx={{ mt: 2 }}>
-            <Grid item xs={12} sm={4}>
-              <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                <CardContent>
-                  <Typography variant="h6" component="h3" gutterBottom>
-                    Verified Sellers
+          <Grid container spacing={4}>
+            {[
+              {
+                title: 'Verified Sellers',
+                description: 'All our sellers go through a strict verification process',
+              },
+              {
+                title: 'Secure Transactions',
+                description: 'Your transactions are protected with bank-level security',
+              },
+              {
+                title: 'Expert Support',
+                description: '24/7 support from our team of trading experts',
+              },
+            ].map((feature, index) => (
+              <Grid item xs={12} md={4} key={index}>
+                <Paper
+                  sx={{
+                    p: 3,
+                    height: '100%',
+                    textAlign: 'center',
+                    transition: '0.3s',
+                    '&:hover': {
+                      transform: 'translateY(-5px)',
+                      boxShadow: theme.shadows[10],
+                    },
+                  }}
+                >
+                  <Typography variant="h5" component="h3" gutterBottom>
+                    {feature.title}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    All our sellers go through a rigorous verification process to ensure the highest quality standards.
+                  <Typography variant="body1" color="text.secondary">
+                    {feature.description}
                   </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                <CardContent>
-                  <Typography variant="h6" component="h3" gutterBottom>
-                    Secure Transactions
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Your purchases are protected by our secure payment system and buyer protection program.
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                <CardContent>
-                  <Typography variant="h6" component="h3" gutterBottom>
-                    Expert Support
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Our team of robot experts is available 24/7 to help you with any questions or concerns.
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
+                </Paper>
+              </Grid>
+            ))}
           </Grid>
         </Container>
       </Box>

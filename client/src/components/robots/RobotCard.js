@@ -1,162 +1,155 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   Card,
   CardContent,
-  CardMedia,
   Typography,
   Box,
-  Chip,
   Rating,
-  IconButton,
-  Divider,
+  Chip,
   useTheme,
 } from '@mui/material';
-import { Favorite, FavoriteBorder } from '@mui/icons-material';
+import ImageLoader from '../common/ImageLoader';
 
-const RobotCard = ({ robot, onFavoriteToggle, isFavorite }) => {
+const RobotCard = ({ robot }) => {
+  const navigate = useNavigate();
   const theme = useTheme();
 
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(price);
+  // Format the robot name to be more prominent
+  const formatRobotName = (name) => {
+    return name || 'Unnamed Robot';
   };
 
-  const handleFavoriteClick = (e) => {
-    e.stopPropagation();
-    if (JSON.parse(localStorage.getItem('user'))) {
-      onFavoriteToggle(robot._id);
-    } else {
-      // navigate('/login');
-    }
+  // Format hours to be more readable
+  const formatHours = (hours) => {
+    return `${hours.toLocaleString()} operating hours`;
   };
 
   return (
     <Card
-      component={Link}
-      to={`/robots/${robot._id}`}
+      onClick={() => navigate(`/robots/${robot.id}`)}
       sx={{
+        height: '100%',
         display: 'flex',
         flexDirection: 'column',
-        height: '100%',
-        textDecoration: 'none',
+        cursor: 'pointer',
+        transition: 'all 0.3s ease',
         '&:hover': {
-          transform: 'scale(1.02)',
-          transition: 'transform 0.3s ease-in-out',
+          transform: 'translateY(-5px)',
+          boxShadow: theme.shadows[10],
         },
       }}
     >
-      <IconButton
-        sx={{
-          position: 'absolute',
-          top: 8,
-          right: 8,
-          bgcolor: 'rgba(255, 255, 255, 0.9)',
-          '&:hover': {
-            bgcolor: 'rgba(255, 255, 255, 1)',
-          },
+      <Box 
+        sx={{ 
+          position: 'relative',
+          paddingTop: '75%', // 4:3 Aspect Ratio
+          backgroundColor: 'grey.100',
+          borderRadius: '8px 8px 0 0',
         }}
-        onClick={handleFavoriteClick}
       >
-        {isFavorite ? (
-          <Favorite sx={{ color: theme.palette.error.main }} />
-        ) : (
-          <FavoriteBorder />
-        )}
-      </IconButton>
-
-      <CardMedia
-        component="img"
-        height="250"
-        image={robot.image}
-        alt={robot.imageAlt || robot.name}
-        onError={(e) => {
-          // If primary image fails, try backup image
-          if (e.target.src !== robot.backupImage) {
-            console.log('Primary image failed, trying backup:', robot.backupImage);
-            e.target.src = robot.backupImage;
-          }
-        }}
-        sx={{
-          objectFit: 'cover',
-          backgroundColor: '#000',
-          '&:hover': {
-            transform: 'scale(1.02)',
-            transition: 'transform 0.3s ease-in-out',
-          },
-        }}
-      />
-
-      <CardContent sx={{ flexGrow: 1, pt: 2 }}>
-        <Typography variant="h6" gutterBottom>
-          {robot.title}
-        </Typography>
-
-        <Box sx={{ mb: 1 }}>
-          <Typography
-            variant="h5"
-            component="div"
-            color="primary"
-            sx={{ fontWeight: 600 }}
-          >
-            {formatPrice(robot.price)}
-          </Typography>
-        </Box>
-
-        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-          <Rating value={parseFloat(robot.rating)} precision={0.1} readOnly size="small" />
-          <Typography variant="body2" color="text.secondary" sx={{ ml: 1 }}>
-            {robot.rating}
-          </Typography>
-        </Box>
-
-        <Box sx={{ mb: 2 }}>
-          <Typography variant="body2" color="text.secondary">
-            {robot.year} • {robot.mileage.toLocaleString()} hours
-          </Typography>
-        </Box>
-
-        <Divider sx={{ my: 1 }} />
-
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 2 }}>
+        <ImageLoader
+          src={robot.image}
+          alt={formatRobotName(robot.name)}
+          category="listing"
+          width="100%"
+          height="100%"
+          objectFit="cover"
+          quality="medium"
+          sx={{ 
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            borderRadius: '8px 8px 0 0',
+          }}
+        />
+        <Box
+          sx={{
+            position: 'absolute',
+            top: theme.spacing(1),
+            left: theme.spacing(1),
+            right: theme.spacing(1),
+            display: 'flex',
+            justifyContent: 'space-between',
+            gap: 1,
+          }}
+        >
           <Chip
             label={robot.manufacturer}
             size="small"
             sx={{
-              bgcolor: theme.palette.primary.light,
+              bgcolor: 'rgba(0, 0, 0, 0.7)',
               color: 'white',
-              fontWeight: 500,
+              fontWeight: 'bold',
             }}
           />
           <Chip
             label={robot.condition}
             size="small"
+            color={robot.condition === 'New' ? 'success' : 'default'}
             sx={{
-              bgcolor: theme.palette.secondary.light,
+              bgcolor: robot.condition === 'New' 
+                ? 'rgba(46, 125, 50, 0.9)'
+                : 'rgba(0, 0, 0, 0.7)',
               color: 'white',
-              fontWeight: 500,
             }}
           />
         </Box>
+      </Box>
+
+      <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+        <Typography
+          variant="h6"
+          component="h2"
+          gutterBottom
+          sx={{
+            fontWeight: 'bold',
+            fontSize: '1.1rem',
+            lineHeight: 1.2,
+            mb: 1,
+          }}
+        >
+          {formatRobotName(robot.name)}
+        </Typography>
 
         <Typography
           variant="body2"
           color="text.secondary"
           sx={{
-            mt: 2,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
             display: '-webkit-box',
             WebkitLineClamp: 2,
             WebkitBoxOrient: 'vertical',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
+            mb: 1,
+            flexGrow: 1,
           }}
         >
           {robot.description}
         </Typography>
+
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+          <Rating value={robot.rating} precision={0.1} readOnly size="small" />
+          <Typography variant="body2" color="text.secondary" sx={{ ml: 1 }}>
+            ({robot.rating})
+          </Typography>
+        </Box>
+
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+          <Box>
+            <Typography variant="h6" color="primary" sx={{ fontWeight: 'bold' }}>
+              ${robot.price.toLocaleString()}
+            </Typography>
+            <Typography variant="caption" color="text.secondary" display="block">
+              {robot.year} • {formatHours(robot.mileage)}
+            </Typography>
+          </Box>
+          <Chip
+            label={robot.type || 'Trading Bot'}
+            size="small"
+            sx={{ bgcolor: theme.palette.grey[100] }}
+          />
+        </Box>
       </CardContent>
     </Card>
   );
