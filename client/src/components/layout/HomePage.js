@@ -11,18 +11,25 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
-  TextField,
   useTheme,
   useMediaQuery,
 } from '@mui/material';
 import { Search as SearchIcon } from '@mui/icons-material';
 
-const BACKGROUND_IMAGE_URL = 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80';
+const BACKGROUND_IMAGE_URL = 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=1920&q=80';
 
 const HomePage = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const [imageLoaded, setImageLoaded] = useState(false);
+
+  // Preload the background image
+  React.useEffect(() => {
+    const img = new Image();
+    img.src = BACKGROUND_IMAGE_URL;
+    img.onload = () => setImageLoaded(true);
+  }, []);
 
   const [searchParams, setSearchParams] = useState({
     type: '',
@@ -46,13 +53,18 @@ const HomePage = () => {
         sx={{
           height: '70vh',
           position: 'relative',
-          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), url(${BACKGROUND_IMAGE_URL})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
+          backgroundColor: theme.palette.grey[900], // Fallback color
+          ...(imageLoaded && {
+            backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), url(${BACKGROUND_IMAGE_URL})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }),
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           color: 'white',
+          transition: 'opacity 0.3s ease-in-out',
+          opacity: imageLoaded ? 1 : 0.9,
         }}
       >
         <Container maxWidth="lg">
@@ -74,7 +86,7 @@ const HomePage = () => {
             elevation={3}
             sx={{
               p: 3,
-              backgroundColor: 'rgba(255, 255, 255, 0.9)',
+              backgroundColor: 'rgba(255, 255, 255, 0.95)',
               borderRadius: 2,
             }}
           >
@@ -87,6 +99,7 @@ const HomePage = () => {
                     onChange={(e) => setSearchParams({ ...searchParams, type: e.target.value })}
                     label="Type"
                   >
+                    <MenuItem value="">All Types</MenuItem>
                     <MenuItem value="industrial">Industrial</MenuItem>
                     <MenuItem value="service">Service</MenuItem>
                     <MenuItem value="companion">Companion</MenuItem>
@@ -104,6 +117,7 @@ const HomePage = () => {
                     onChange={(e) => setSearchParams({ ...searchParams, priceRange: e.target.value })}
                     label="Price Range"
                   >
+                    <MenuItem value="">Any Price</MenuItem>
                     <MenuItem value="0-1000">Under $1,000</MenuItem>
                     <MenuItem value="1000-5000">$1,000 - $5,000</MenuItem>
                     <MenuItem value="5000-10000">$5,000 - $10,000</MenuItem>
@@ -121,6 +135,7 @@ const HomePage = () => {
                     onChange={(e) => setSearchParams({ ...searchParams, manufacturer: e.target.value })}
                     label="Manufacturer"
                   >
+                    <MenuItem value="">All Manufacturers</MenuItem>
                     <MenuItem value="boston-dynamics">Boston Dynamics</MenuItem>
                     <MenuItem value="abb">ABB</MenuItem>
                     <MenuItem value="fanuc">FANUC</MenuItem>
@@ -138,6 +153,7 @@ const HomePage = () => {
                     onChange={(e) => setSearchParams({ ...searchParams, condition: e.target.value })}
                     label="Condition"
                   >
+                    <MenuItem value="">Any Condition</MenuItem>
                     <MenuItem value="new">New</MenuItem>
                     <MenuItem value="like-new">Like New</MenuItem>
                     <MenuItem value="excellent">Excellent</MenuItem>
@@ -160,6 +176,8 @@ const HomePage = () => {
                     '&:hover': {
                       backgroundColor: theme.palette.primary.dark,
                     },
+                    height: 56,
+                    fontSize: '1.1rem',
                   }}
                 >
                   Search Robots
@@ -175,30 +193,33 @@ const HomePage = () => {
         <Grid container spacing={4}>
           {/* Popular Categories */}
           <Grid item xs={12}>
-            <Typography variant="h4" component="h2" gutterBottom>
+            <Typography variant="h4" component="h2" gutterBottom sx={{ fontWeight: 600 }}>
               Popular Categories
             </Typography>
             <Grid container spacing={2}>
               {[
-                { title: 'Industrial Robots', image: 'industrial.jpg' },
-                { title: 'Service Robots', image: 'service.jpg' },
-                { title: 'Companion Robots', image: 'companion.jpg' },
-                { title: 'Medical Robots', image: 'medical.jpg' },
+                { title: 'Industrial Robots', image: 'industrial.jpg', type: 'industrial' },
+                { title: 'Service Robots', image: 'service.jpg', type: 'service' },
+                { title: 'Companion Robots', image: 'companion.jpg', type: 'companion' },
+                { title: 'Medical Robots', image: 'medical.jpg', type: 'medical' },
               ].map((category) => (
                 <Grid item xs={12} sm={6} md={3} key={category.title}>
                   <Paper
                     sx={{
-                      p: 2,
+                      p: 3,
                       textAlign: 'center',
                       cursor: 'pointer',
+                      transition: 'all 0.2s ease-in-out',
                       '&:hover': {
                         transform: 'translateY(-4px)',
-                        transition: 'transform 0.2s',
+                        boxShadow: theme.shadows[4],
                       },
                     }}
-                    onClick={() => navigate(`/robots?type=${category.title.split(' ')[0].toLowerCase()}`)}
+                    onClick={() => navigate(`/robots?type=${category.type}`)}
                   >
-                    <Typography variant="h6">{category.title}</Typography>
+                    <Typography variant="h6" sx={{ fontWeight: 500 }}>
+                      {category.title}
+                    </Typography>
                   </Paper>
                 </Grid>
               ))}
@@ -207,7 +228,7 @@ const HomePage = () => {
 
           {/* Research & Reviews */}
           <Grid item xs={12} sx={{ mt: 6 }}>
-            <Typography variant="h4" component="h2" gutterBottom>
+            <Typography variant="h4" component="h2" gutterBottom sx={{ fontWeight: 600 }}>
               Research & Reviews
             </Typography>
             <Grid container spacing={3}>
@@ -220,15 +241,16 @@ const HomePage = () => {
                 <Grid item xs={12} sm={6} md={3} key={title}>
                   <Paper
                     sx={{
-                      p: 2,
+                      p: 3,
                       height: '100%',
                       cursor: 'pointer',
+                      transition: 'background-color 0.2s ease-in-out',
                       '&:hover': {
-                        backgroundColor: theme.palette.grey[100],
+                        backgroundColor: theme.palette.grey[50],
                       },
                     }}
                   >
-                    <Typography variant="h6" gutterBottom>
+                    <Typography variant="h6" gutterBottom sx={{ fontWeight: 500 }}>
                       {title}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
