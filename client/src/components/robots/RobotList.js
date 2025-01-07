@@ -107,11 +107,41 @@ const TESLA_LOCATIONS = [
 ];
 
 const TESLA_OPTIMUS_IMAGES = [
-  'https://www.teslarati.com/wp-content/uploads/2022/10/tesla-optimus-white-1024x576.jpg',
-  'https://www.teslarati.com/wp-content/uploads/2022/10/tesla-bot-optimus-1-1024x576.jpg',
-  'https://www.teslarati.com/wp-content/uploads/2023/12/tesla-optimus-gen-2-1024x576.jpg',
-  'https://www.teslarati.com/wp-content/uploads/2023/12/tesla-optimus-gen-2-walking.jpg',
-  'https://www.teslarati.com/wp-content/uploads/2023/12/tesla-optimus-gen-2-hands.jpg'
+  {
+    url: 'https://www.teslarati.com/wp-content/uploads/2023/12/tesla-optimus-gen-2-1024x576.jpg',
+    alt: 'Tesla Optimus Gen 2 Full Body'
+  },
+  {
+    url: 'https://www.teslarati.com/wp-content/uploads/2023/12/tesla-optimus-gen-2-walking.jpg',
+    alt: 'Tesla Optimus Gen 2 Walking'
+  },
+  {
+    url: 'https://www.teslarati.com/wp-content/uploads/2023/12/tesla-optimus-gen-2-hands.jpg',
+    alt: 'Tesla Optimus Gen 2 Hands'
+  },
+  {
+    url: 'https://www.teslarati.com/wp-content/uploads/2022/10/tesla-optimus-white-1024x576.jpg',
+    alt: 'Tesla Optimus White'
+  },
+  {
+    url: 'https://www.teslarati.com/wp-content/uploads/2022/10/tesla-bot-optimus-1-1024x576.jpg',
+    alt: 'Tesla Bot Optimus'
+  }
+];
+
+const BACKUP_IMAGES = [
+  {
+    url: 'https://img.freepik.com/premium-photo/futuristic-humanoid-robot-white-background_899870-5096.jpg',
+    alt: 'Humanoid Robot'
+  },
+  {
+    url: 'https://img.freepik.com/premium-photo/humanoid-robot-artificial-intelligence-dark-background_899870-5099.jpg',
+    alt: 'AI Robot'
+  },
+  {
+    url: 'https://img.freepik.com/premium-photo/humanoid-robot-dark-background_899870-5098.jpg',
+    alt: 'Advanced Robot'
+  }
 ];
 
 const RobotList = () => {
@@ -213,19 +243,27 @@ const RobotList = () => {
       setLoading(true);
       // Simulate API call
       setTimeout(() => {
-        const mockRobots = TESLA_LOCATIONS.map((location, i) => ({
-          id: i + 1,
-          name: location,
-          type: ROBOT_TYPES[Math.floor(Math.random() * (ROBOT_TYPES.length - 1)) + 1],
-          manufacturer: MANUFACTURERS[Math.floor(Math.random() * (MANUFACTURERS.length - 1)) + 1],
-          price: Math.floor(Math.random() * 90000) + 10000,
-          condition: CONDITIONS[Math.floor(Math.random() * (CONDITIONS.length - 1)) + 1],
-          rating: (Math.random() * 2 + 3).toFixed(1),
-          image: TESLA_OPTIMUS_IMAGES[Math.floor(Math.random() * TESLA_OPTIMUS_IMAGES.length)],
-          description: `Advanced ${location} robotics solution featuring Tesla's Optimus technology with state-of-the-art AI capabilities, enhanced mobility, and industry-leading performance metrics.`,
-          year: Math.floor(Math.random() * (2026 - 2023)) + 2023,
-          mileage: Math.floor(Math.random() * 5000),
-        }));
+        const mockRobots = TESLA_LOCATIONS.map((location, i) => {
+          // Get a random image, but try to distribute them evenly
+          const primaryImage = TESLA_OPTIMUS_IMAGES[i % TESLA_OPTIMUS_IMAGES.length];
+          const backupImage = BACKUP_IMAGES[i % BACKUP_IMAGES.length];
+          
+          return {
+            id: i + 1,
+            name: location,
+            type: ROBOT_TYPES[Math.floor(Math.random() * (ROBOT_TYPES.length - 1)) + 1],
+            manufacturer: MANUFACTURERS[Math.floor(Math.random() * (MANUFACTURERS.length - 1)) + 1],
+            price: Math.floor(Math.random() * 90000) + 10000,
+            condition: CONDITIONS[Math.floor(Math.random() * (CONDITIONS.length - 1)) + 1],
+            rating: (Math.random() * 2 + 3).toFixed(1),
+            image: primaryImage.url,
+            imageAlt: primaryImage.alt,
+            backupImage: backupImage.url,
+            description: `Advanced ${location} robotics solution featuring Tesla's Optimus technology with state-of-the-art AI capabilities, enhanced mobility, and industry-leading performance metrics.`,
+            year: Math.floor(Math.random() * (2026 - 2023)) + 2023,
+            mileage: Math.floor(Math.random() * 5000),
+          };
+        });
 
         console.log('Generated mock robots:', mockRobots);
 

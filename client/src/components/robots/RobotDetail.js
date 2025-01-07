@@ -42,6 +42,8 @@ const RobotDetail = () => {
           condition: 'Like New',
           rating: 4.5,
           image: 'https://www.teslarati.com/wp-content/uploads/2023/12/tesla-optimus-gen-2-1024x576.jpg',
+          imageAlt: 'Tesla Optimus Gen 2',
+          backupImage: 'https://www.teslarati.com/wp-content/uploads/2023/12/tesla-optimus-gen-2-backup-1024x576.jpg',
           description: 'Advanced Tesla robotics solution featuring state-of-the-art AI capabilities, enhanced mobility, and industry-leading performance metrics.',
           year: 2024,
           mileage: 1200,
@@ -107,7 +109,14 @@ const RobotDetail = () => {
               component="img"
               height="500"
               image={robot.image}
-              alt={robot.name}
+              alt={robot.imageAlt || robot.name}
+              onError={(e) => {
+                // If primary image fails, try backup image
+                if (e.target.src !== robot.backupImage) {
+                  console.log('Primary image failed, trying backup:', robot.backupImage);
+                  e.target.src = robot.backupImage;
+                }
+              }}
               sx={{
                 objectFit: 'cover',
                 backgroundColor: '#000',

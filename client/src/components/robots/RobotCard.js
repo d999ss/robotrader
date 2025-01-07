@@ -73,7 +73,14 @@ const RobotCard = ({ robot, onFavoriteToggle, isFavorite }) => {
         component="img"
         height="250"
         image={robot.image}
-        alt={robot.name}
+        alt={robot.imageAlt || robot.name}
+        onError={(e) => {
+          // If primary image fails, try backup image
+          if (e.target.src !== robot.backupImage) {
+            console.log('Primary image failed, trying backup:', robot.backupImage);
+            e.target.src = robot.backupImage;
+          }
+        }}
         sx={{
           objectFit: 'cover',
           backgroundColor: '#000',
