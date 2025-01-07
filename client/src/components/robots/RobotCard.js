@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import {
   Card,
   CardContent,
@@ -15,14 +15,7 @@ import {
 import { Favorite, FavoriteBorder } from '@mui/icons-material';
 
 const RobotCard = ({ robot, onFavoriteToggle, isFavorite }) => {
-  const navigate = useNavigate();
   const theme = useTheme();
-
-  const handleCardClick = (e) => {
-    // Don't navigate if clicking the favorite button
-    if (e.target.closest('button')) return;
-    navigate(`/robots/${robot._id}`);
-  };
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat('en-US', {
@@ -38,25 +31,24 @@ const RobotCard = ({ robot, onFavoriteToggle, isFavorite }) => {
     if (JSON.parse(localStorage.getItem('user'))) {
       onFavoriteToggle(robot._id);
     } else {
-      navigate('/login');
+      // navigate('/login');
     }
   };
 
   return (
     <Card
+      component={Link}
+      to={`/robots/${robot._id}`}
       sx={{
-        height: '100%',
         display: 'flex',
         flexDirection: 'column',
-        position: 'relative',
-        transition: 'transform 0.2s, box-shadow 0.2s',
+        height: '100%',
+        textDecoration: 'none',
         '&:hover': {
-          transform: 'translateY(-4px)',
-          boxShadow: theme.shadows[4],
-          cursor: 'pointer',
+          transform: 'scale(1.02)',
+          transition: 'transform 0.3s ease-in-out',
         },
       }}
-      onClick={handleCardClick}
     >
       <IconButton
         sx={{

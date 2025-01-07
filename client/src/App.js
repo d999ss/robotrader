@@ -5,7 +5,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Navbar from './components/layout/Navbar';
 import HomePage from './components/layout/HomePage';
 import RobotList from './components/robots/RobotList';
-import RobotDetails from './components/robots/RobotDetails';
+import RobotDetail from './components/robots/RobotDetail';
 import CreateRobotListing from './components/robots/CreateRobotListing';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
@@ -34,9 +34,9 @@ function App() {
           <Navbar />
           <main style={{ flex: 1 }}>
             <Routes>
-              <Route path="/" element={<HomePage />} />
+              <Route path="/" element={<Navigate to="/robots" />} />
               <Route path="/robots" element={<RobotList />} />
-              <Route path="/robots/:id" element={<RobotDetails />} />
+              <Route path="/robots/:id" element={<RobotDetail />} />
               <Route
                 path="/create-listing"
                 element={
