@@ -154,25 +154,32 @@ const RobotList = () => {
 
   // Filter robots based on current filters
   const getFilteredRobots = (robots, filters) => {
+    console.log('Filtering robots:', { robots, filters });
     return robots.filter(robot => {
       // Type filter
-      if (filters.type && robot.type.toLowerCase() !== filters.type.toLowerCase()) {
+      if (filters.type && filters.type !== 'all' && robot.type !== filters.type) {
+        console.log('Failed type filter:', robot.type, filters.type);
         return false;
       }
 
       // Price range filter
-      const price = parseFloat(robot.price);
-      if (price < filters.priceRange[0] || price > filters.priceRange[1]) {
-        return false;
+      if (filters.priceRange && Array.isArray(filters.priceRange)) {
+        const price = parseFloat(robot.price);
+        if (price < filters.priceRange[0] || price > filters.priceRange[1]) {
+          console.log('Failed price filter:', price, filters.priceRange);
+          return false;
+        }
       }
 
       // Manufacturer filter
-      if (filters.manufacturer && robot.manufacturer.toLowerCase().replace(' ', '-') !== filters.manufacturer) {
+      if (filters.manufacturer && filters.manufacturer !== 'all' && robot.manufacturer !== filters.manufacturer) {
+        console.log('Failed manufacturer filter:', robot.manufacturer, filters.manufacturer);
         return false;
       }
 
       // Condition filter
-      if (filters.condition && robot.condition.toLowerCase().replace(' ', '-') !== filters.condition) {
+      if (filters.condition && filters.condition !== 'all' && robot.condition !== filters.condition) {
+        console.log('Failed condition filter:', robot.condition, filters.condition);
         return false;
       }
 
@@ -182,6 +189,7 @@ const RobotList = () => {
 
   // Sort robots based on current sort option
   const getSortedRobots = (robots, sortBy) => {
+    console.log('Sorting robots:', { robots, sortBy });
     const sortedRobots = [...robots];
     switch (sortBy) {
       case 'price_asc':
@@ -197,67 +205,52 @@ const RobotList = () => {
     }
   };
 
-  const fetchRobots = useCallback(async () => {
-    setLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      const mockRobots = TESLA_LOCATIONS.map((location, i) => ({
-        id: i + 1,
-        name: location,
-        type: ROBOT_TYPES[Math.floor(Math.random() * (ROBOT_TYPES.length - 1)) + 1], // Skip "All Types"
-        manufacturer: MANUFACTURERS[Math.floor(Math.random() * (MANUFACTURERS.length - 1)) + 1], // Skip "All Manufacturers"
-        price: Math.floor(Math.random() * 90000) + 10000,
-        condition: CONDITIONS[Math.floor(Math.random() * (CONDITIONS.length - 1)) + 1], // Skip "Any Condition"
-        rating: (Math.random() * 2 + 3).toFixed(1),
-        image: TESLA_OPTIMUS_IMAGES[Math.floor(Math.random() * TESLA_OPTIMUS_IMAGES.length)],
-        description: `Advanced ${location} robotics solution featuring Tesla's Optimus technology with state-of-the-art AI capabilities, enhanced mobility, and industry-leading performance metrics.`,
-        year: Math.floor(Math.random() * (2026 - 2023)) + 2023,
-        mileage: Math.floor(Math.random() * 5000),
-      }));
+  // Mock data - replace with actual API call
+  useEffect(() => {
+    const fetchRobots = async () => {
+      setLoading(true);
+      // Simulate API call
+      setTimeout(() => {
+        const mockRobots = TESLA_LOCATIONS.map((location, i) => ({
+          id: i + 1,
+          name: location,
+          type: ROBOT_TYPES[Math.floor(Math.random() * (ROBOT_TYPES.length - 1)) + 1], // Skip "All Types"
+          manufacturer: MANUFACTURERS[Math.floor(Math.random() * (MANUFACTURERS.length - 1)) + 1], // Skip "All Manufacturers"
+          price: Math.floor(Math.random() * 90000) + 10000,
+          condition: CONDITIONS[Math.floor(Math.random() * (CONDITIONS.length - 1)) + 1], // Skip "Any Condition"
+          rating: (Math.random() * 2 + 3).toFixed(1),
+          image: TESLA_OPTIMUS_IMAGES[Math.floor(Math.random() * TESLA_OPTIMUS_IMAGES.length)],
+          description: `Advanced ${location} robotics solution featuring Tesla's Optimus technology with state-of-the-art AI capabilities, enhanced mobility, and industry-leading performance metrics.`,
+          year: Math.floor(Math.random() * (2026 - 2023)) + 2023,
+          mileage: Math.floor(Math.random() * 5000),
+        }));
 
-      // Apply filters and sorting
-      let filteredRobots = getFilteredRobots(mockRobots, filters);
-      filteredRobots = getSortedRobots(filteredRobots, filters.sortBy);
-      
-      setRobots(filteredRobots);
-      setLoading(false);
-    }, 1000);
+        console.log('Generated mock robots:', mockRobots);
+
+        // Apply filters and sorting
+        let filteredRobots = getFilteredRobots(mockRobots, filters);
+        console.log('After filtering:', filteredRobots);
+        
+        filteredRobots = getSortedRobots(filteredRobots, filters.sortBy);
+        console.log('After sorting:', filteredRobots);
+        
+        setRobots(filteredRobots);
+        setLoading(false);
+      }, 1000);
+    };
+
+    fetchRobots();
   }, [filters]);
 
-  const fetchFavorites = useCallback(async () => {
-    const token = localStorage.getItem('token');
-    if (!token) return;
-
-    try {
-      const response = await fetch(`${config.API_URL}/api/users/favorites`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-      if (!response.ok) throw new Error('Failed to fetch favorites');
-      const data = await response.json();
-      setFavorites(data.map(fav => fav._id));
-    } catch (err) {
-      console.error('Error fetching favorites:', err);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchRobots();
-    fetchFavorites();
-  }, [fetchRobots, fetchFavorites]);
-
-  const handleFilterChange = (event) => {
-    const { name, value } = event.target;
-    setFilters(prev => ({
-      ...prev,
-      [name]: value,
-    }));
+  // Handle filter changes
+  const handleFilterChange = (newFilters) => {
+    console.log('Filter changed:', newFilters);
+    setFilters(prev => ({ ...prev, ...newFilters }));
   };
 
   const handleSearch = (event) => {
     event.preventDefault();
-    fetchRobots();
+    // fetchRobots();
   };
 
   if (loading) {
@@ -301,7 +294,7 @@ const RobotList = () => {
                 label="Search Robots"
                 name="search"
                 value={filters.search}
-                onChange={handleFilterChange}
+                onChange={(event) => handleFilterChange({ search: event.target.value })}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -319,7 +312,7 @@ const RobotList = () => {
                 <Select
                   name="manufacturer"
                   value={filters.manufacturer}
-                  onChange={handleFilterChange}
+                  onChange={(event) => handleFilterChange({ manufacturer: event.target.value })}
                   label="Manufacturer"
                 >
                   <MenuItem value="">All</MenuItem>
@@ -336,7 +329,7 @@ const RobotList = () => {
                 <Select
                   name="condition"
                   value={filters.condition}
-                  onChange={handleFilterChange}
+                  onChange={(event) => handleFilterChange({ condition: event.target.value })}
                   label="Condition"
                 >
                   <MenuItem value="">All</MenuItem>
@@ -353,7 +346,7 @@ const RobotList = () => {
                 <Select
                   name="type"
                   value={filters.type}
-                  onChange={handleFilterChange}
+                  onChange={(event) => handleFilterChange({ type: event.target.value })}
                   label="Type"
                 >
                   <MenuItem value="">All</MenuItem>
@@ -370,7 +363,7 @@ const RobotList = () => {
                 <Select
                   name="sortBy"
                   value={filters.sortBy}
-                  onChange={handleFilterChange}
+                  onChange={(event) => handleFilterChange({ sortBy: event.target.value })}
                   label="Sort By"
                 >
                   {SORT_OPTIONS.map(option => (
