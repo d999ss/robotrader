@@ -18,6 +18,41 @@ import { Search as SearchIcon } from '@mui/icons-material';
 import RobotCard from './RobotCard';
 import config from '../../config';
 
+const ROBOT_TYPES = [
+  'All Types',
+  'Industrial',
+  'Service',
+  'Companion',
+  'Medical',
+  'Educational',
+];
+
+const MANUFACTURERS = [
+  'All Manufacturers',
+  'Boston Dynamics',
+  'ABB',
+  'FANUC',
+  'KUKA',
+  'Universal Robots',
+];
+
+const CONDITIONS = [
+  'Any Condition',
+  'New',
+  'Like New',
+  'Excellent',
+  'Good',
+  'Fair',
+];
+
+const SORT_OPTIONS = [
+  { value: 'relevance', label: 'Most Relevant' },
+  { value: 'price_asc', label: 'Price: Low to High' },
+  { value: 'price_desc', label: 'Price: High to Low' },
+  { value: 'rating_desc', label: 'Highest Rated' },
+  { value: 'newest', label: 'Newest Listings' },
+];
+
 const RobotList = () => {
   const [robots, setRobots] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -28,7 +63,8 @@ const RobotList = () => {
     manufacturer: '',
     condition: '',
     priceRange: '',
-    type: ''
+    type: '',
+    sortBy: 'relevance',
   });
   const [debouncedFilters, setDebouncedFilters] = useState(filters);
 
@@ -49,7 +85,8 @@ const RobotList = () => {
       manufacturer: params.get('manufacturer') || '',
       condition: params.get('condition') || '',
       priceRange: params.get('priceRange') || '',
-      type: params.get('type') || ''
+      type: params.get('type') || '',
+      sortBy: params.get('sortBy') || 'relevance',
     };
     setFilters(newFilters);
   }, []);
@@ -65,6 +102,7 @@ const RobotList = () => {
       if (debouncedFilters.condition) queryParams.append('condition', debouncedFilters.condition);
       if (debouncedFilters.priceRange) queryParams.append('priceRange', debouncedFilters.priceRange);
       if (debouncedFilters.type) queryParams.append('type', debouncedFilters.type);
+      if (debouncedFilters.sortBy) queryParams.append('sortBy', debouncedFilters.sortBy);
       
       if (queryParams.toString()) {
         url += `?${queryParams.toString()}`;
@@ -210,10 +248,9 @@ const RobotList = () => {
                   label="Manufacturer"
                 >
                   <MenuItem value="">All</MenuItem>
-                  <MenuItem value="Boston Dynamics">Boston Dynamics</MenuItem>
-                  <MenuItem value="FANUC">FANUC</MenuItem>
-                  <MenuItem value="KUKA">KUKA</MenuItem>
-                  <MenuItem value="ABB">ABB</MenuItem>
+                  {MANUFACTURERS.map(manufacturer => (
+                    <MenuItem key={manufacturer} value={manufacturer === 'All Manufacturers' ? '' : manufacturer.toLowerCase().replace(' ', '-')}>{manufacturer}</MenuItem>
+                  ))}
                 </Select>
               </FormControl>
             </Grid>
@@ -228,35 +265,13 @@ const RobotList = () => {
                   label="Condition"
                 >
                   <MenuItem value="">All</MenuItem>
-                  <MenuItem value="New">New</MenuItem>
-                  <MenuItem value="Like New">Like New</MenuItem>
-                  <MenuItem value="Excellent">Excellent</MenuItem>
-                  <MenuItem value="Good">Good</MenuItem>
-                  <MenuItem value="Fair">Fair</MenuItem>
-                  <MenuItem value="Poor">Poor</MenuItem>
+                  {CONDITIONS.map(condition => (
+                    <MenuItem key={condition} value={condition === 'Any Condition' ? '' : condition.toLowerCase().replace(' ', '-')}>{condition}</MenuItem>
+                  ))}
                 </Select>
               </FormControl>
             </Grid>
             
-            <Grid item xs={12} sm={6} md={2}>
-              <FormControl fullWidth>
-                <InputLabel>Price Range</InputLabel>
-                <Select
-                  name="priceRange"
-                  value={filters.priceRange}
-                  onChange={handleFilterChange}
-                  label="Price Range"
-                >
-                  <MenuItem value="">All</MenuItem>
-                  <MenuItem value="0-1000">$0 - $1,000</MenuItem>
-                  <MenuItem value="1000-5000">$1,000 - $5,000</MenuItem>
-                  <MenuItem value="5000-10000">$5,000 - $10,000</MenuItem>
-                  <MenuItem value="10000-50000">$10,000 - $50,000</MenuItem>
-                  <MenuItem value="50000+">$50,000+</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-
             <Grid item xs={12} sm={6} md={2}>
               <FormControl fullWidth>
                 <InputLabel>Type</InputLabel>
@@ -267,9 +282,25 @@ const RobotList = () => {
                   label="Type"
                 >
                   <MenuItem value="">All</MenuItem>
-                  <MenuItem value="Industrial">Industrial</MenuItem>
-                  <MenuItem value="Service">Service</MenuItem>
-                  <MenuItem value="Autonomous">Autonomous</MenuItem>
+                  {ROBOT_TYPES.map(type => (
+                    <MenuItem key={type} value={type === 'All Types' ? '' : type.toLowerCase()}>{type}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+
+            <Grid item xs={12} sm={6} md={2}>
+              <FormControl fullWidth>
+                <InputLabel>Sort By</InputLabel>
+                <Select
+                  name="sortBy"
+                  value={filters.sortBy}
+                  onChange={handleFilterChange}
+                  label="Sort By"
+                >
+                  {SORT_OPTIONS.map(option => (
+                    <MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>
+                  ))}
                 </Select>
               </FormControl>
             </Grid>
