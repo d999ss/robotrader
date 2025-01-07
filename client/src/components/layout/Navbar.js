@@ -110,7 +110,7 @@ const Navbar = () => {
                     <MenuItem 
                       key="create" 
                       onClick={() => {
-                        navigate('/robots/new');
+                        navigate('/create-listing');
                         handleClose();
                       }}
                     >
@@ -120,7 +120,7 @@ const Navbar = () => {
                     <MenuItem 
                       key="listings" 
                       onClick={() => {
-                        navigate('/my-listings');
+                        navigate('/profile');
                         handleClose();
                       }}
                     >
@@ -130,7 +130,7 @@ const Navbar = () => {
                     <MenuItem 
                       key="favorites" 
                       onClick={() => {
-                        navigate('/favorites');
+                        navigate('/profile');
                         handleClose();
                       }}
                     >
@@ -173,7 +173,7 @@ const Navbar = () => {
                   <Button
                     color="inherit"
                     component={RouterLink}
-                    to="/robots/new"
+                    to="/create-listing"
                     startIcon={<AddIcon />}
                   >
                     Create Listing
@@ -181,7 +181,7 @@ const Navbar = () => {
                   <Button
                     color="inherit"
                     component={RouterLink}
-                    to="/my-listings"
+                    to="/profile"
                     startIcon={<ListIcon />}
                   >
                     My Listings
@@ -189,7 +189,7 @@ const Navbar = () => {
                   <Button
                     color="inherit"
                     component={RouterLink}
-                    to="/favorites"
+                    to="/profile"
                     startIcon={<FavoriteIcon />}
                   >
                     Favorites

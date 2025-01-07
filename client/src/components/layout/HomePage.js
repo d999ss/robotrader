@@ -1,268 +1,232 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Box,
   Container,
   Typography,
-  Paper,
-  Grid,
   Button,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
+  Box,
+  Grid,
+  Card,
+  CardMedia,
+  CardContent,
+  Paper,
   useTheme,
-  useMediaQuery,
+  alpha,
 } from '@mui/material';
-import { Search as SearchIcon } from '@mui/icons-material';
-
-const BACKGROUND_IMAGE_URL = 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=1920&q=80';
+import {
+  Explore as ExploreIcon,
+  AddCircle as AddCircleIcon,
+  ArrowForward as ArrowForwardIcon,
+} from '@mui/icons-material';
+import RobotCard from '../robots/RobotCard';
 
 const HomePage = () => {
   const theme = useTheme();
   const navigate = useNavigate();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const [imageLoaded, setImageLoaded] = useState(false);
+  const [featuredRobots, setFeaturedRobots] = useState([]);
 
-  // Preload the background image
-  React.useEffect(() => {
-    const img = new Image();
-    img.src = BACKGROUND_IMAGE_URL;
-    img.onload = () => setImageLoaded(true);
+  useEffect(() => {
+    // Fetch featured robots
+    const fetchFeaturedRobots = async () => {
+      try {
+        const response = await fetch('/api/robots/featured');
+        const data = await response.json();
+        setFeaturedRobots(data.slice(0, 3)); // Show top 3 featured robots
+      } catch (error) {
+        console.error('Error fetching featured robots:', error);
+        // Use mock data if API fails
+        setFeaturedRobots([
+          {
+            id: 1,
+            name: 'Tesla Optimus Gen 2',
+            price: 89999,
+            image: 'https://www.teslarati.com/wp-content/uploads/2023/12/tesla-optimus-gen-2-1024x576.jpg',
+            description: 'Latest generation Tesla Optimus robot with enhanced mobility and AI capabilities.',
+            rating: 4.9,
+            condition: 'New'
+          },
+          {
+            id: 2,
+            name: 'Tesla Optimus Pro',
+            price: 79999,
+            image: 'https://www.teslarati.com/wp-content/uploads/2023/12/tesla-optimus-gen-2-walking.jpg',
+            description: 'Professional grade Tesla Optimus with advanced industrial applications.',
+            rating: 4.8,
+            condition: 'New'
+          },
+          {
+            id: 3,
+            name: 'Tesla Optimus Lite',
+            price: 69999,
+            image: 'https://www.teslarati.com/wp-content/uploads/2023/12/tesla-optimus-gen-2-hands.jpg',
+            description: 'Entry-level Tesla Optimus perfect for home and small business use.',
+            rating: 4.7,
+            condition: 'New'
+          }
+        ]);
+      }
+    };
+
+    fetchFeaturedRobots();
   }, []);
-
-  const [searchParams, setSearchParams] = useState({
-    type: '',
-    priceRange: '',
-    manufacturer: '',
-    condition: '',
-  });
-
-  const handleSearch = () => {
-    const queryParams = new URLSearchParams();
-    Object.entries(searchParams).forEach(([key, value]) => {
-      if (value) queryParams.append(key, value);
-    });
-    navigate(`/robots?${queryParams.toString()}`);
-  };
 
   return (
     <Box>
       {/* Hero Section */}
-      <Box
+      <Paper
         sx={{
-          height: '70vh',
           position: 'relative',
-          backgroundColor: theme.palette.grey[900], // Fallback color
-          ...(imageLoaded && {
-            backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), url(${BACKGROUND_IMAGE_URL})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }),
+          backgroundColor: 'grey.800',
+          color: '#fff',
+          mb: 4,
+          backgroundSize: 'cover',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center',
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(https://www.teslarati.com/wp-content/uploads/2023/12/tesla-optimus-gen-2-1024x576.jpg)`,
+          height: '70vh',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'center',
-          color: 'white',
-          transition: 'opacity 0.3s ease-in-out',
-          opacity: imageLoaded ? 1 : 0.9,
         }}
       >
         <Container maxWidth="lg">
-          <Typography
-            variant="h2"
-            component="h1"
-            sx={{
-              fontWeight: 700,
-              textAlign: 'center',
-              mb: 4,
-              fontSize: isMobile ? '2.5rem' : '3.5rem',
-            }}
-          >
-            Find Your Perfect Robot
+          <Box sx={{ p: { xs: 3, md: 6 } }}>
+            <Typography
+              component="h1"
+              variant="h2"
+              color="inherit"
+              gutterBottom
+              sx={{
+                fontWeight: 700,
+                textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
+              }}
+            >
+              Welcome to RoboTrader
+            </Typography>
+            <Typography
+              variant="h5"
+              color="inherit"
+              paragraph
+              sx={{
+                maxWidth: '600px',
+                mb: 4,
+                textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
+              }}
+            >
+              Your premier marketplace for Tesla Optimus robots. Buy and sell the future of automation with confidence.
+            </Typography>
+            <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+              <Button
+                variant="contained"
+                size="large"
+                startIcon={<ExploreIcon />}
+                onClick={() => navigate('/robots')}
+                sx={{
+                  backgroundColor: theme.palette.primary.main,
+                  '&:hover': {
+                    backgroundColor: alpha(theme.palette.primary.main, 0.9),
+                  },
+                }}
+              >
+                Browse Robots
+              </Button>
+              <Button
+                variant="outlined"
+                size="large"
+                startIcon={<AddCircleIcon />}
+                onClick={() => navigate('/create-listing')}
+                sx={{
+                  borderColor: '#fff',
+                  color: '#fff',
+                  '&:hover': {
+                    borderColor: alpha('#fff', 0.9),
+                    backgroundColor: alpha('#fff', 0.1),
+                  },
+                }}
+              >
+                Sell Your Robot
+              </Button>
+            </Box>
+          </Box>
+        </Container>
+      </Paper>
+
+      {/* Featured Robots Section */}
+      <Container maxWidth="lg" sx={{ mb: 8 }}>
+        <Box sx={{ mb: 4 }}>
+          <Typography variant="h4" component="h2" gutterBottom>
+            Featured Robots
           </Typography>
+          <Typography variant="body1" color="text.secondary" paragraph>
+            Discover our top-rated Tesla Optimus robots, hand-picked for their exceptional quality and value.
+          </Typography>
+        </Box>
 
-          {/* Search Form */}
-          <Paper
-            elevation={3}
-            sx={{
-              p: 3,
-              backgroundColor: 'rgba(255, 255, 255, 0.95)',
-              borderRadius: 2,
-            }}
-          >
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6} md={3}>
-                <FormControl fullWidth>
-                  <InputLabel>Type</InputLabel>
-                  <Select
-                    value={searchParams.type}
-                    onChange={(e) => setSearchParams({ ...searchParams, type: e.target.value })}
-                    label="Type"
-                  >
-                    <MenuItem value="">All Types</MenuItem>
-                    <MenuItem value="industrial">Industrial</MenuItem>
-                    <MenuItem value="service">Service</MenuItem>
-                    <MenuItem value="companion">Companion</MenuItem>
-                    <MenuItem value="medical">Medical</MenuItem>
-                    <MenuItem value="educational">Educational</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
-
-              <Grid item xs={12} sm={6} md={3}>
-                <FormControl fullWidth>
-                  <InputLabel>Price Range</InputLabel>
-                  <Select
-                    value={searchParams.priceRange}
-                    onChange={(e) => setSearchParams({ ...searchParams, priceRange: e.target.value })}
-                    label="Price Range"
-                  >
-                    <MenuItem value="">Any Price</MenuItem>
-                    <MenuItem value="0-1000">Under $1,000</MenuItem>
-                    <MenuItem value="1000-5000">$1,000 - $5,000</MenuItem>
-                    <MenuItem value="5000-10000">$5,000 - $10,000</MenuItem>
-                    <MenuItem value="10000-50000">$10,000 - $50,000</MenuItem>
-                    <MenuItem value="50000-100000">$50,000+</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
-
-              <Grid item xs={12} sm={6} md={3}>
-                <FormControl fullWidth>
-                  <InputLabel>Manufacturer</InputLabel>
-                  <Select
-                    value={searchParams.manufacturer}
-                    onChange={(e) => setSearchParams({ ...searchParams, manufacturer: e.target.value })}
-                    label="Manufacturer"
-                  >
-                    <MenuItem value="">All Manufacturers</MenuItem>
-                    <MenuItem value="boston-dynamics">Boston Dynamics</MenuItem>
-                    <MenuItem value="abb">ABB</MenuItem>
-                    <MenuItem value="fanuc">FANUC</MenuItem>
-                    <MenuItem value="kuka">KUKA</MenuItem>
-                    <MenuItem value="universal-robots">Universal Robots</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
-
-              <Grid item xs={12} sm={6} md={3}>
-                <FormControl fullWidth>
-                  <InputLabel>Condition</InputLabel>
-                  <Select
-                    value={searchParams.condition}
-                    onChange={(e) => setSearchParams({ ...searchParams, condition: e.target.value })}
-                    label="Condition"
-                  >
-                    <MenuItem value="">Any Condition</MenuItem>
-                    <MenuItem value="new">New</MenuItem>
-                    <MenuItem value="like-new">Like New</MenuItem>
-                    <MenuItem value="excellent">Excellent</MenuItem>
-                    <MenuItem value="good">Good</MenuItem>
-                    <MenuItem value="fair">Fair</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
-
-              <Grid item xs={12}>
-                <Button
-                  fullWidth
-                  variant="contained"
-                  size="large"
-                  onClick={handleSearch}
-                  startIcon={<SearchIcon />}
-                  sx={{
-                    mt: 2,
-                    backgroundColor: theme.palette.primary.main,
-                    '&:hover': {
-                      backgroundColor: theme.palette.primary.dark,
-                    },
-                    height: 56,
-                    fontSize: '1.1rem',
-                  }}
-                >
-                  Search Robots
-                </Button>
-              </Grid>
+        <Grid container spacing={4}>
+          {featuredRobots.map((robot) => (
+            <Grid item xs={12} sm={6} md={4} key={robot.id}>
+              <RobotCard robot={robot} />
             </Grid>
-          </Paper>
+          ))}
+        </Grid>
+
+        <Box sx={{ mt: 4, textAlign: 'center' }}>
+          <Button
+            variant="outlined"
+            size="large"
+            endIcon={<ArrowForwardIcon />}
+            onClick={() => navigate('/robots')}
+          >
+            View All Robots
+          </Button>
+        </Box>
+      </Container>
+
+      {/* Why Choose Us Section */}
+      <Box sx={{ bgcolor: 'background.paper', py: 8 }}>
+        <Container maxWidth="lg">
+          <Typography variant="h4" component="h2" gutterBottom align="center">
+            Why Choose RoboTrader?
+          </Typography>
+          <Grid container spacing={4} sx={{ mt: 2 }}>
+            <Grid item xs={12} sm={4}>
+              <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <CardContent>
+                  <Typography variant="h6" component="h3" gutterBottom>
+                    Verified Sellers
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    All our sellers go through a rigorous verification process to ensure the highest quality standards.
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <CardContent>
+                  <Typography variant="h6" component="h3" gutterBottom>
+                    Secure Transactions
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Your purchases are protected by our secure payment system and buyer protection program.
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <CardContent>
+                  <Typography variant="h6" component="h3" gutterBottom>
+                    Expert Support
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Our team of robot experts is available 24/7 to help you with any questions or concerns.
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
         </Container>
       </Box>
-
-      {/* Featured Sections */}
-      <Container maxWidth="lg" sx={{ py: 8 }}>
-        <Grid container spacing={4}>
-          {/* Popular Categories */}
-          <Grid item xs={12}>
-            <Typography variant="h4" component="h2" gutterBottom sx={{ fontWeight: 600 }}>
-              Popular Categories
-            </Typography>
-            <Grid container spacing={2}>
-              {[
-                { title: 'Industrial Robots', image: 'industrial.jpg', type: 'industrial' },
-                { title: 'Service Robots', image: 'service.jpg', type: 'service' },
-                { title: 'Companion Robots', image: 'companion.jpg', type: 'companion' },
-                { title: 'Medical Robots', image: 'medical.jpg', type: 'medical' },
-              ].map((category) => (
-                <Grid item xs={12} sm={6} md={3} key={category.title}>
-                  <Paper
-                    sx={{
-                      p: 3,
-                      textAlign: 'center',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease-in-out',
-                      '&:hover': {
-                        transform: 'translateY(-4px)',
-                        boxShadow: theme.shadows[4],
-                      },
-                    }}
-                    onClick={() => navigate(`/robots?type=${category.type}`)}
-                  >
-                    <Typography variant="h6" sx={{ fontWeight: 500 }}>
-                      {category.title}
-                    </Typography>
-                  </Paper>
-                </Grid>
-              ))}
-            </Grid>
-          </Grid>
-
-          {/* Research & Reviews */}
-          <Grid item xs={12} sx={{ mt: 6 }}>
-            <Typography variant="h4" component="h2" gutterBottom sx={{ fontWeight: 600 }}>
-              Research & Reviews
-            </Typography>
-            <Grid container spacing={3}>
-              {[
-                'Top Rated Industrial Robots',
-                'Best Companion Robots for 2025',
-                'Medical Robot Reviews',
-                'Educational Robot Guide',
-              ].map((title) => (
-                <Grid item xs={12} sm={6} md={3} key={title}>
-                  <Paper
-                    sx={{
-                      p: 3,
-                      height: '100%',
-                      cursor: 'pointer',
-                      transition: 'background-color 0.2s ease-in-out',
-                      '&:hover': {
-                        backgroundColor: theme.palette.grey[50],
-                      },
-                    }}
-                  >
-                    <Typography variant="h6" gutterBottom sx={{ fontWeight: 500 }}>
-                      {title}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Read our comprehensive guide and reviews
-                    </Typography>
-                  </Paper>
-                </Grid>
-              ))}
-            </Grid>
-          </Grid>
-        </Grid>
-      </Container>
     </Box>
   );
 };

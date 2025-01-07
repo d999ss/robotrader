@@ -10,6 +10,7 @@ import {
   CircularProgress,
 } from '@mui/material';
 import RobotCard from '../robots/RobotCard';
+import UserSettings from './UserSettings';
 
 const UserProfile = () => {
   const [tab, setTab] = useState(0);
@@ -70,6 +71,7 @@ const UserProfile = () => {
           <Tabs value={tab} onChange={handleTabChange}>
             <Tab label="My Listings" />
             <Tab label="Favorites" />
+            <Tab label="Settings" />
           </Tabs>
         </Box>
 
@@ -100,12 +102,14 @@ const UserProfile = () => {
             {favorites.length === 0 && (
               <Grid item xs={12}>
                 <Typography variant="body1" color="textSecondary" align="center">
-                  You haven't added any robots to your favorites yet.
+                  You haven't favorited any robots yet.
                 </Typography>
               </Grid>
             )}
           </Grid>
         )}
+
+        {tab === 2 && <UserSettings />}
       </Paper>
     </Container>
   );

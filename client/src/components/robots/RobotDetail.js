@@ -20,12 +20,16 @@ import BuildIcon from '@mui/icons-material/Build';
 import SpeedIcon from '@mui/icons-material/Speed';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import EmailIcon from '@mui/icons-material/Email';
+import ContactSeller from './ContactSeller';
 
 const RobotDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [robot, setRobot] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [contactDialogOpen, setContactDialogOpen] = useState(false);
 
   useEffect(() => {
     const fetchRobotDetail = async () => {
@@ -93,13 +97,23 @@ const RobotDetail = () => {
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
       {/* Back Button */}
-      <Button
-        startIcon={<ArrowBackIcon />}
-        onClick={() => navigate('/robots')}
-        sx={{ mb: 3 }}
-      >
-        Back to Listings
-      </Button>
+      <Box sx={{ mt: 3, display: 'flex', gap: 2 }}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => setContactDialogOpen(true)}
+          startIcon={<EmailIcon />}
+        >
+          Contact Seller
+        </Button>
+        <Button
+          variant="outlined"
+          onClick={() => navigate('/robots')}
+          startIcon={<ArrowBackIcon />}
+        >
+          Back to Listings
+        </Button>
+      </Box>
 
       <Grid container spacing={4}>
         {/* Left Column - Image and Basic Info */}
@@ -241,19 +255,16 @@ const RobotDetail = () => {
               ))}
             </Grid>
           </Paper>
-
-          {/* Contact Button */}
-          <Button
-            variant="contained"
-            size="large"
-            fullWidth
-            sx={{ mt: 3 }}
-            startIcon={<AttachMoneyIcon />}
-          >
-            Contact Seller
-          </Button>
         </Grid>
       </Grid>
+
+      {/* Contact Seller Dialog */}
+      <ContactSeller
+        open={contactDialogOpen}
+        onClose={() => setContactDialogOpen(false)}
+        robotId={robot?.id}
+        robotName={robot?.name}
+      />
     </Container>
   );
 };

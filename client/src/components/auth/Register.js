@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import {
   Container,
   Paper,
@@ -8,6 +8,7 @@ import {
   Typography,
   Box,
   Alert,
+  Link,
 } from '@mui/material';
 
 const Register = () => {
@@ -134,6 +135,16 @@ const Register = () => {
             >
               Register
             </Button>
+            <Typography variant="body2" align="center">
+              Already have an account?{' '}
+              <Link
+                component={RouterLink}
+                to="/login"
+                sx={{ textDecoration: 'none' }}
+              >
+                Login here
+              </Link>
+            </Typography>
           </form>
 
           <Box sx={{ mt: 2, textAlign: 'center' }}>
