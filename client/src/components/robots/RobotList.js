@@ -156,31 +156,33 @@ const RobotList = () => {
   const getFilteredRobots = (robots, filters) => {
     console.log('Filtering robots:', { robots, filters });
     return robots.filter(robot => {
-      // Type filter
-      if (filters.type && filters.type !== 'all' && robot.type !== filters.type) {
-        console.log('Failed type filter:', robot.type, filters.type);
-        return false;
-      }
-
-      // Price range filter
-      if (filters.priceRange && Array.isArray(filters.priceRange)) {
-        const price = parseFloat(robot.price);
-        if (price < filters.priceRange[0] || price > filters.priceRange[1]) {
-          console.log('Failed price filter:', price, filters.priceRange);
+      // Type filter - only apply if a specific type is selected
+      if (filters.type && filters.type !== '' && filters.type !== 'all') {
+        if (robot.type !== filters.type) {
           return false;
         }
       }
 
-      // Manufacturer filter
-      if (filters.manufacturer && filters.manufacturer !== 'all' && robot.manufacturer !== filters.manufacturer) {
-        console.log('Failed manufacturer filter:', robot.manufacturer, filters.manufacturer);
-        return false;
+      // Price range filter - only apply if valid range is provided
+      if (filters.priceRange && Array.isArray(filters.priceRange) && filters.priceRange.length === 2) {
+        const price = parseFloat(robot.price);
+        if (price < filters.priceRange[0] || price > filters.priceRange[1]) {
+          return false;
+        }
       }
 
-      // Condition filter
-      if (filters.condition && filters.condition !== 'all' && robot.condition !== filters.condition) {
-        console.log('Failed condition filter:', robot.condition, filters.condition);
-        return false;
+      // Manufacturer filter - only apply if specific manufacturer is selected
+      if (filters.manufacturer && filters.manufacturer !== '' && filters.manufacturer !== 'all') {
+        if (robot.manufacturer !== filters.manufacturer) {
+          return false;
+        }
+      }
+
+      // Condition filter - only apply if specific condition is selected
+      if (filters.condition && filters.condition !== '' && filters.condition !== 'all') {
+        if (robot.condition !== filters.condition) {
+          return false;
+        }
       }
 
       return true;
@@ -214,10 +216,10 @@ const RobotList = () => {
         const mockRobots = TESLA_LOCATIONS.map((location, i) => ({
           id: i + 1,
           name: location,
-          type: ROBOT_TYPES[Math.floor(Math.random() * (ROBOT_TYPES.length - 1)) + 1], // Skip "All Types"
-          manufacturer: MANUFACTURERS[Math.floor(Math.random() * (MANUFACTURERS.length - 1)) + 1], // Skip "All Manufacturers"
+          type: ROBOT_TYPES[Math.floor(Math.random() * (ROBOT_TYPES.length - 1)) + 1],
+          manufacturer: MANUFACTURERS[Math.floor(Math.random() * (MANUFACTURERS.length - 1)) + 1],
           price: Math.floor(Math.random() * 90000) + 10000,
-          condition: CONDITIONS[Math.floor(Math.random() * (CONDITIONS.length - 1)) + 1], // Skip "Any Condition"
+          condition: CONDITIONS[Math.floor(Math.random() * (CONDITIONS.length - 1)) + 1],
           rating: (Math.random() * 2 + 3).toFixed(1),
           image: TESLA_OPTIMUS_IMAGES[Math.floor(Math.random() * TESLA_OPTIMUS_IMAGES.length)],
           description: `Advanced ${location} robotics solution featuring Tesla's Optimus technology with state-of-the-art AI capabilities, enhanced mobility, and industry-leading performance metrics.`,
@@ -230,6 +232,12 @@ const RobotList = () => {
         // Apply filters and sorting
         let filteredRobots = getFilteredRobots(mockRobots, filters);
         console.log('After filtering:', filteredRobots);
+        
+        // If no results after filtering, show all robots
+        if (filteredRobots.length === 0) {
+          console.log('No results found, showing all robots');
+          filteredRobots = mockRobots;
+        }
         
         filteredRobots = getSortedRobots(filteredRobots, filters.sortBy);
         console.log('After sorting:', filteredRobots);
