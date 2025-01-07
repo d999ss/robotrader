@@ -1,146 +1,146 @@
 export const mockRobots = [
   {
     id: 1,
-    name: 'TradeMaster Pro',
-    type: 'High-Frequency Trading',
-    manufacturer: 'AlgoTech Solutions',
+    name: 'Tesla Optimus Gen 2',
+    type: 'Humanoid Robot',
+    manufacturer: 'Tesla Robotics',
     price: 89999,
     condition: 'New',
     rating: 4.8,
     image: '/images/boredoptimism_Tesla_bot_profile_image_simple_background_No_Br_0f71d355-a786-414e-8b77-92f6a965e0fe_0.png',
-    description: 'Advanced high-frequency trading robot with ultra-low latency execution and sophisticated market-making strategies.',
+    description: 'Advanced humanoid robot with state-of-the-art AI capabilities, enhanced mobility, and sophisticated manipulation abilities.',
     year: 2025,
     features: [
-      'Sub-microsecond latency',
-      'Multi-asset trading',
-      'Real-time risk management',
-      'Machine learning optimization'
+      'Advanced AI Processing',
+      'Human-like Movement',
+      'Precision Handling',
+      'Voice Interaction'
     ]
   },
   {
     id: 2,
-    name: 'Quantum Trader X1',
-    type: 'Algorithmic Trading',
-    manufacturer: 'QuantumBots Inc',
+    name: 'Optimus Prime',
+    type: 'Industrial Robot',
+    manufacturer: 'Tesla Robotics',
     price: 75000,
     condition: 'New',
     rating: 4.7,
     image: '/images/boredoptimism_Tesla_bot_profile_image_simple_background_No_Br_1ee369a7-3caa-4680-a2e8-1cf89ba183d4_0.png',
-    description: 'Quantum-inspired algorithmic trading system with advanced pattern recognition and predictive analytics.',
+    description: 'Heavy-duty industrial robot designed for manufacturing and assembly tasks with high precision and reliability.',
     year: 2025,
     features: [
-      'Quantum-inspired algorithms',
-      'Pattern recognition',
-      'Predictive analytics',
-      'Portfolio optimization'
+      'Industrial Strength',
+      'Assembly Line Integration',
+      'High Precision Control',
+      'Safety Protocols'
     ]
   },
   {
     id: 3,
-    name: 'AI Arbitrage Bot',
-    type: 'Arbitrage Trading',
-    manufacturer: 'Neural Systems',
+    name: 'Tesla Assistant X',
+    type: 'Service Robot',
+    manufacturer: 'Tesla Robotics',
     price: 62999,
     condition: 'Like New',
     rating: 4.6,
     image: '/images/boredoptimism_Tesla_bot_profile_image_simple_background_No_Br_436b55f7-138b-4acd-aca7-9716438cd728_0.png',
-    description: 'AI-powered arbitrage trading robot that identifies and executes cross-exchange opportunities in real-time.',
+    description: 'Versatile service robot perfect for retail, hospitality, and customer service environments.',
     year: 2024,
     features: [
-      'Cross-exchange arbitrage',
-      'Real-time opportunity detection',
-      'Smart order routing',
-      'Risk assessment'
+      'Customer Interaction',
+      'Navigation System',
+      'Task Management',
+      'Service Protocols'
     ]
   },
   {
     id: 4,
-    name: 'CryptoSentinel Elite',
-    type: 'Cryptocurrency Trading',
-    manufacturer: 'BlockTech Robotics',
+    name: 'RoboHelper Pro',
+    type: 'Home Assistant',
+    manufacturer: 'Tesla Home',
     price: 55000,
     condition: 'Excellent',
     rating: 4.5,
     image: '/images/boredoptimism_Tesla_bot_profile_image_simple_background_No_Br_5392a959-85a5-46ca-ad2c-f5c137a32577_0.png',
-    description: 'Specialized cryptocurrency trading robot with advanced blockchain analytics and sentiment analysis.',
+    description: 'Home assistance robot capable of household tasks, elderly care, and family support.',
     year: 2024,
     features: [
-      'Multi-chain support',
-      'Sentiment analysis',
-      'Technical indicators',
-      'DeFi integration'
+      'Household Tasks',
+      'Elder Care',
+      'Child Supervision',
+      'Home Management'
     ]
   },
   {
     id: 5,
-    name: 'ForexMaster 5000',
-    type: 'Forex Trading',
-    manufacturer: 'FX Dynamics',
+    name: 'Tesla Worker Bot',
+    type: 'Factory Robot',
+    manufacturer: 'Tesla Industrial',
     price: 48999,
     condition: 'New',
     rating: 4.4,
     image: '/images/boredoptimism_Tesla_bot_profile_image_simple_background_No_Br_70c3c6de-38c1-402b-a362-6f7d113f45e6_0.png',
-    description: 'Professional forex trading robot with advanced currency pair analysis and news-based trading strategies.',
+    description: 'Specialized factory worker robot designed for Tesla\'s advanced manufacturing facilities.',
     year: 2024,
     features: [
-      'Multi-currency support',
-      'News-based trading',
-      'Technical analysis',
-      'Risk management'
+      'Factory Integration',
+      'Heavy Lifting',
+      'Precision Assembly',
+      'Quality Control'
     ]
   },
   {
     id: 6,
-    name: 'Options Oracle',
-    type: 'Options Trading',
-    manufacturer: 'DerivaTech',
+    name: 'MediBot X',
+    type: 'Medical Assistant',
+    manufacturer: 'Tesla Medical',
     price: 82999,
     condition: 'New',
     rating: 4.9,
     image: '/images/boredoptimism_Tesla_bot_profile_image_simple_background_No_Br_8d6a3234-30f7-4abd-8431-791897f8e2ef_0.png',
-    description: 'Sophisticated options trading robot with advanced volatility analysis and options chain optimization.',
+    description: 'Medical assistance robot for hospitals and healthcare facilities with advanced patient care capabilities.',
     year: 2025,
     features: [
-      'Greeks analysis',
-      'Volatility surface modeling',
-      'Options chain analysis',
-      'Strategy optimization'
+      'Patient Care',
+      'Medical Monitoring',
+      'Assistance in Surgery',
+      'Sanitization'
     ]
   },
   {
     id: 7,
-    name: 'SmartScalper Pro',
-    type: 'Scalping Trading',
-    manufacturer: 'Precision Robotics',
+    name: 'EduBot Plus',
+    type: 'Educational Robot',
+    manufacturer: 'Tesla Education',
     price: 45000,
     condition: 'Good',
     rating: 4.3,
     image: '/images/boredoptimism_Tesla_bot_profile_image_simple_background_No_Br_95a1bbd8-7f14-43d1-9b00-e7f4ba1093b7_0.png',
-    description: 'High-speed scalping robot designed for capturing small price movements with high accuracy.',
+    description: 'Educational robot designed for schools and learning institutions with interactive teaching capabilities.',
     year: 2024,
     features: [
-      'Ultra-fast execution',
-      'Tick data analysis',
-      'Custom indicators',
-      'Risk controls'
+      'Interactive Learning',
+      'Subject Teaching',
+      'Student Engagement',
+      'Progress Tracking'
     ]
   },
   {
     id: 8,
-    name: 'MacroTrend Navigator',
-    type: 'Trend Following',
-    manufacturer: 'TrendTech Solutions',
+    name: 'SecurityBot Pro',
+    type: 'Security Robot',
+    manufacturer: 'Tesla Security',
     price: 68999,
     condition: 'New',
     rating: 4.7,
     image: '/images/boredoptimism_Tesla_bot_profile_image_simple_background_No_Br_9ab29dd8-5f43-4288-91e7-5f600fa58e5c_0.png',
-    description: 'Advanced trend-following robot with macro-economic analysis and multi-timeframe strategy execution.',
+    description: 'Advanced security robot for surveillance, monitoring, and facility protection with AI-powered threat detection.',
     year: 2025,
     features: [
-      'Macro analysis',
-      'Multi-timeframe analysis',
-      'Trend detection',
-      'Position sizing'
+      'Surveillance',
+      'Threat Detection',
+      'Emergency Response',
+      'Access Control'
     ]
   }
 ];
