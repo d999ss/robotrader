@@ -123,7 +123,7 @@ const RobotList = () => {
     search: '',
     manufacturer: '',
     condition: '',
-    priceRange: '',
+    priceRange: [0, 100000],
     type: '',
     sortBy: 'relevance',
   });
@@ -145,12 +145,57 @@ const RobotList = () => {
       search: params.get('search') || '',
       manufacturer: params.get('manufacturer') || '',
       condition: params.get('condition') || '',
-      priceRange: params.get('priceRange') || '',
+      priceRange: params.get('priceRange') || [0, 100000],
       type: params.get('type') || '',
       sortBy: params.get('sortBy') || 'relevance',
     };
     setFilters(newFilters);
   }, []);
+
+  // Filter robots based on current filters
+  const getFilteredRobots = (robots, filters) => {
+    return robots.filter(robot => {
+      // Type filter
+      if (filters.type && robot.type.toLowerCase() !== filters.type.toLowerCase()) {
+        return false;
+      }
+
+      // Price range filter
+      const price = parseFloat(robot.price);
+      if (price < filters.priceRange[0] || price > filters.priceRange[1]) {
+        return false;
+      }
+
+      // Manufacturer filter
+      if (filters.manufacturer && robot.manufacturer.toLowerCase().replace(' ', '-') !== filters.manufacturer) {
+        return false;
+      }
+
+      // Condition filter
+      if (filters.condition && robot.condition.toLowerCase().replace(' ', '-') !== filters.condition) {
+        return false;
+      }
+
+      return true;
+    });
+  };
+
+  // Sort robots based on current sort option
+  const getSortedRobots = (robots, sortBy) => {
+    const sortedRobots = [...robots];
+    switch (sortBy) {
+      case 'price_asc':
+        return sortedRobots.sort((a, b) => a.price - b.price);
+      case 'price_desc':
+        return sortedRobots.sort((a, b) => b.price - a.price);
+      case 'rating_desc':
+        return sortedRobots.sort((a, b) => parseFloat(b.rating) - parseFloat(a.rating));
+      case 'newest':
+        return sortedRobots.sort((a, b) => b.year - a.year);
+      default: // 'relevance'
+        return sortedRobots;
+    }
+  };
 
   const fetchRobots = useCallback(async () => {
     setLoading(true);
@@ -169,7 +214,12 @@ const RobotList = () => {
         year: Math.floor(Math.random() * (2026 - 2023)) + 2023,
         mileage: Math.floor(Math.random() * 5000),
       }));
-      setRobots(mockRobots);
+
+      // Apply filters and sorting
+      let filteredRobots = getFilteredRobots(mockRobots, filters);
+      filteredRobots = getSortedRobots(filteredRobots, filters.sortBy);
+      
+      setRobots(filteredRobots);
       setLoading(false);
     }, 1000);
   }, [filters]);
