@@ -16,7 +16,8 @@ import {
   useMediaQuery,
 } from '@mui/material';
 import { Search as SearchIcon } from '@mui/icons-material';
-import robotBackground from '../../assets/robot-background.jpg';
+
+const BACKGROUND_IMAGE_URL = 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80';
 
 const HomePage = () => {
   const theme = useTheme();
@@ -45,7 +46,7 @@ const HomePage = () => {
         sx={{
           height: '70vh',
           position: 'relative',
-          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), url(${robotBackground})`,
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), url(${BACKGROUND_IMAGE_URL})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           display: 'flex',
