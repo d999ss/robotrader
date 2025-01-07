@@ -1,9 +1,11 @@
 import React from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
-import { ThemeProvider, CssBaseline } from '@mui/material';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import Navbar from './components/layout/Navbar';
+import HomePage from './components/layout/HomePage';
 import theme from './theme';
 import AppRoutes from './routes';
-import Navbar from './components/layout/Navbar';
 
 const App = () => {
   return (
@@ -18,7 +20,10 @@ const App = () => {
         }}>
           <Navbar />
           <main style={{ flex: 1 }}>
-            <AppRoutes />
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/*" element={<AppRoutes />} />
+            </Routes>
           </main>
         </div>
       </Router>
