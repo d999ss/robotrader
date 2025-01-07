@@ -18,16 +18,22 @@ const RobotCard = ({ robot }) => {
     navigate(`/robots/${robot.id}`);
   };
 
+  const handleImageError = (e) => {
+    console.error('Image failed to load:', robot.image);
+    e.target.src = '/images/boredoptimism_Tesla_bot_profile_image_simple_background_No_Br_0f71d355-a786-414e-8b77-92f6a965e0fe_0.png';
+  };
+
   return (
     <Card 
       sx={{ 
+        maxWidth: 345,
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
-        transition: 'transform 0.2s, box-shadow 0.2s',
+        position: 'relative',
         '&:hover': {
-          transform: 'translateY(-4px)',
-          boxShadow: 8,
+          transform: 'scale(1.02)',
+          transition: 'transform 0.2s ease-in-out'
         },
         borderRadius: 2,
         overflow: 'hidden',
@@ -37,11 +43,13 @@ const RobotCard = ({ robot }) => {
         <Box sx={{ position: 'relative' }}>
           <CardMedia
             component="img"
-            height="280"
+            height="200"
             image={robot.image}
             alt={robot.name}
+            onError={handleImageError}
             sx={{
               objectFit: 'cover',
+              objectPosition: 'center',
               backgroundColor: '#f8f9fa',
             }}
           />
