@@ -28,14 +28,13 @@ mongoose.set('debug', true);
 const mongooseOptions = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-  serverSelectionTimeoutMS: 30000,
+  serverSelectionTimeoutMS: 60000, // Increased to 60 seconds
   socketTimeoutMS: 45000,
-  connectTimeoutMS: 30000,
+  connectTimeoutMS: 60000, // Increased to 60 seconds
   keepAlive: true,
   keepAliveInitialDelay: 300000,
-  poolSize: 10,
-  maxPoolSize: 10,
-  minPoolSize: 5,
+  maxPoolSize: 1, // Reduced for M0 tier
+  minPoolSize: 1, // Reduced for M0 tier
   maxIdleTimeMS: 120000,
   waitQueueTimeoutMS: 30000,
   heartbeatFrequencyMS: 10000,
@@ -45,12 +44,19 @@ const mongooseOptions = {
 };
 
 // Function to connect with retries
-const connectWithRetry = async (retries = 5, interval = 5000) => {
+const connectWithRetry = async (retries = 10, interval = 10000) => { // Increased retries and interval
   for (let i = 0; i < retries; i++) {
     try {
       console.log(`MongoDB connection attempt ${i + 1} of ${retries}`);
+      
+      // Close any existing connection
+      if (mongoose.connection.readyState !== 0) {
+        await mongoose.connection.close();
+      }
+      
       await mongoose.connect(MONGODB_URI, mongooseOptions);
       console.log('Connected to MongoDB successfully');
+      
       // Test the connection
       await mongoose.connection.db.admin().ping();
       console.log('MongoDB ping successful - database is responsive');
@@ -61,6 +67,7 @@ const connectWithRetry = async (retries = 5, interval = 5000) => {
         message: err.message,
         code: err.code
       });
+      
       if (i < retries - 1) {
         console.log(`Retrying in ${interval/1000} seconds...`);
         await new Promise(resolve => setTimeout(resolve, interval));
