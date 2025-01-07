@@ -53,6 +53,59 @@ const SORT_OPTIONS = [
   { value: 'newest', label: 'Newest Listings' },
 ];
 
+const TESLA_LOCATIONS = [
+  'Tesla California',
+  'Tesla Texas',
+  'Tesla Nevada',
+  'Tesla New York',
+  'Tesla Shanghai',
+  'Tesla Berlin',
+  'Tesla Arizona',
+  'Tesla Florida',
+  'Tesla Washington',
+  'Tesla Oregon',
+  'Tesla Colorado',
+  'Tesla Illinois',
+  'Tesla Michigan',
+  'Tesla Ohio',
+  'Tesla Pennsylvania',
+  'Tesla Virginia',
+  'Tesla Maryland',
+  'Tesla Massachusetts',
+  'Tesla Connecticut',
+  'Tesla New Jersey',
+  'Tesla Minnesota',
+  'Tesla Wisconsin',
+  'Tesla Indiana',
+  'Tesla Tennessee',
+  'Tesla Kentucky',
+  'Tesla Georgia',
+  'Tesla Alabama',
+  'Tesla Mississippi',
+  'Tesla Louisiana',
+  'Tesla Oklahoma',
+  'Tesla Kansas',
+  'Tesla Nebraska',
+  'Tesla Iowa',
+  'Tesla Missouri',
+  'Tesla Arkansas',
+  'Tesla South Carolina',
+  'Tesla North Carolina',
+  'Tesla Delaware',
+  'Tesla Rhode Island',
+  'Tesla New Hampshire',
+  'Tesla Maine',
+  'Tesla Vermont',
+  'Tesla Montana',
+  'Tesla Idaho',
+  'Tesla Wyoming',
+  'Tesla South Dakota',
+  'Tesla North Dakota',
+  'Tesla New Mexico',
+  'Tesla Hawaii',
+  'Tesla Alaska'
+];
+
 const RobotList = () => {
   const [robots, setRobots] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -92,62 +145,26 @@ const RobotList = () => {
   }, []);
 
   const fetchRobots = useCallback(async () => {
-    try {
-      setLoading(true);
-      let url = `${config.API_URL}/api/robots`;
-      const queryParams = new URLSearchParams();
-      
-      if (debouncedFilters.search) queryParams.append('search', debouncedFilters.search);
-      if (debouncedFilters.manufacturer) queryParams.append('manufacturer', debouncedFilters.manufacturer);
-      if (debouncedFilters.condition) queryParams.append('condition', debouncedFilters.condition);
-      if (debouncedFilters.priceRange) queryParams.append('priceRange', debouncedFilters.priceRange);
-      if (debouncedFilters.type) queryParams.append('type', debouncedFilters.type);
-      if (debouncedFilters.sortBy) queryParams.append('sortBy', debouncedFilters.sortBy);
-      
-      if (queryParams.toString()) {
-        url += `?${queryParams.toString()}`;
-      }
-
-      console.log('Fetching robots from:', url);
-      
-      const response = await fetch(url);
-      console.log('Response status:', response.status);
-      
-      const responseText = await response.text();
-      console.log('Raw response:', responseText);
-      
-      if (!response.ok) {
-        throw new Error(`Failed to fetch robots: ${response.status} ${responseText}`);
-      }
-      
-      let data;
-      try {
-        data = JSON.parse(responseText);
-      } catch (parseError) {
-        console.error('Error parsing response:', parseError);
-        throw new Error('Invalid response format from server');
-      }
-      
-      console.log('Parsed robots data:', data);
-      
-      if (!Array.isArray(data)) {
-        console.error('Expected array of robots, got:', typeof data);
-        throw new Error('Invalid data format from server');
-      }
-      
-      setRobots(data);
-      setError('');
-    } catch (err) {
-      console.error('Error details:', {
-        message: err.message,
-        stack: err.stack,
-        name: err.name
-      });
-      setError(`Error: ${err.message}`);
-    } finally {
+    setLoading(true);
+    // Simulate API call
+    setTimeout(() => {
+      const mockRobots = TESLA_LOCATIONS.map((location, i) => ({
+        id: i + 1,
+        name: location,
+        type: ROBOT_TYPES[Math.floor(Math.random() * (ROBOT_TYPES.length - 1)) + 1], // Skip "All Types"
+        manufacturer: MANUFACTURERS[Math.floor(Math.random() * (MANUFACTURERS.length - 1)) + 1], // Skip "All Manufacturers"
+        price: Math.floor(Math.random() * 90000) + 10000,
+        condition: CONDITIONS[Math.floor(Math.random() * (CONDITIONS.length - 1)) + 1], // Skip "Any Condition"
+        rating: (Math.random() * 2 + 3).toFixed(1),
+        image: `https://source.unsplash.com/featured/400x300?robot&sig=${i}`,
+        description: `Advanced ${location} robotics solution featuring state-of-the-art AI capabilities, enhanced mobility, and industry-leading performance metrics.`,
+        year: Math.floor(Math.random() * (2026 - 2023)) + 2023,
+        mileage: Math.floor(Math.random() * 5000),
+      }));
+      setRobots(mockRobots);
       setLoading(false);
-    }
-  }, [debouncedFilters]);
+    }, 1000);
+  }, [filters]);
 
   const fetchFavorites = useCallback(async () => {
     const token = localStorage.getItem('token');
@@ -329,10 +346,10 @@ const RobotList = () => {
 
       <Grid container spacing={3}>
         {robots.map(robot => (
-          <Grid item xs={12} sm={6} md={4} key={robot._id}>
+          <Grid item xs={12} sm={6} md={4} key={robot.id}>
             <RobotCard
               robot={robot}
-              isFavorite={favorites.includes(robot._id)}
+              isFavorite={favorites.includes(robot.id)}
             />
           </Grid>
         ))}
