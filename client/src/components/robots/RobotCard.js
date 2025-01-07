@@ -79,10 +79,17 @@ const RobotCard = ({ robot, onFavoriteToggle, isFavorite }) => {
 
       <CardMedia
         component="img"
-        height="200"
-        image={robot.images[0] || '/robot-placeholder.jpg'}
-        alt={robot.title}
-        sx={{ objectFit: 'cover' }}
+        height="250"
+        image={robot.image}
+        alt={robot.name}
+        sx={{
+          objectFit: 'cover',
+          backgroundColor: '#000',
+          '&:hover': {
+            transform: 'scale(1.02)',
+            transition: 'transform 0.3s ease-in-out',
+          },
+        }}
       />
 
       <CardContent sx={{ flexGrow: 1, pt: 2 }}>

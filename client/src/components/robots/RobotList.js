@@ -106,6 +106,14 @@ const TESLA_LOCATIONS = [
   'Tesla Alaska'
 ];
 
+const TESLA_OPTIMUS_IMAGES = [
+  'https://www.teslarati.com/wp-content/uploads/2022/10/tesla-optimus-white-1024x576.jpg',
+  'https://www.teslarati.com/wp-content/uploads/2022/10/tesla-bot-optimus-1-1024x576.jpg',
+  'https://www.teslarati.com/wp-content/uploads/2023/12/tesla-optimus-gen-2-1024x576.jpg',
+  'https://www.teslarati.com/wp-content/uploads/2023/12/tesla-optimus-gen-2-walking.jpg',
+  'https://www.teslarati.com/wp-content/uploads/2023/12/tesla-optimus-gen-2-hands.jpg'
+];
+
 const RobotList = () => {
   const [robots, setRobots] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -156,8 +164,8 @@ const RobotList = () => {
         price: Math.floor(Math.random() * 90000) + 10000,
         condition: CONDITIONS[Math.floor(Math.random() * (CONDITIONS.length - 1)) + 1], // Skip "Any Condition"
         rating: (Math.random() * 2 + 3).toFixed(1),
-        image: `https://source.unsplash.com/featured/400x300?robot&sig=${i}`,
-        description: `Advanced ${location} robotics solution featuring state-of-the-art AI capabilities, enhanced mobility, and industry-leading performance metrics.`,
+        image: TESLA_OPTIMUS_IMAGES[Math.floor(Math.random() * TESLA_OPTIMUS_IMAGES.length)],
+        description: `Advanced ${location} robotics solution featuring Tesla's Optimus technology with state-of-the-art AI capabilities, enhanced mobility, and industry-leading performance metrics.`,
         year: Math.floor(Math.random() * (2026 - 2023)) + 2023,
         mileage: Math.floor(Math.random() * 5000),
       }));
