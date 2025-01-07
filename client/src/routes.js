@@ -6,6 +6,7 @@ import RobotList from './components/robots/RobotList';
 import RobotDetails from './components/robots/RobotDetails';
 import CreateRobotListing from './components/robots/CreateRobotListing';
 import UserProfile from './components/user/UserProfile';
+import HomePage from './components/layout/HomePage';
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
@@ -18,19 +19,19 @@ const ProtectedRoute = ({ children }) => {
 const AppRoutes = () => {
   return (
     <Routes>
-      <Route path="/" element={<RobotList />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
+      <Route path="/" element={<HomePage />} />
       <Route path="/robots" element={<RobotList />} />
       <Route path="/robots/:id" element={<RobotDetails />} />
       <Route
-        path="/robots/new"
+        path="/create-listing"
         element={
           <ProtectedRoute>
             <CreateRobotListing />
           </ProtectedRoute>
         }
       />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
       <Route
         path="/profile"
         element={

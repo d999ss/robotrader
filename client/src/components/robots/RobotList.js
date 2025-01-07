@@ -28,6 +28,7 @@ const RobotList = () => {
     manufacturer: '',
     condition: '',
     priceRange: '',
+    type: ''
   });
   const [debouncedFilters, setDebouncedFilters] = useState(filters);
 
@@ -40,6 +41,19 @@ const RobotList = () => {
     return () => clearTimeout(timer);
   }, [filters]);
 
+  // Parse URL parameters on component mount
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const newFilters = {
+      search: params.get('search') || '',
+      manufacturer: params.get('manufacturer') || '',
+      condition: params.get('condition') || '',
+      priceRange: params.get('priceRange') || '',
+      type: params.get('type') || ''
+    };
+    setFilters(newFilters);
+  }, []);
+
   const fetchRobots = useCallback(async () => {
     try {
       setLoading(true);
@@ -50,18 +64,19 @@ const RobotList = () => {
       if (debouncedFilters.manufacturer) queryParams.append('manufacturer', debouncedFilters.manufacturer);
       if (debouncedFilters.condition) queryParams.append('condition', debouncedFilters.condition);
       if (debouncedFilters.priceRange) queryParams.append('priceRange', debouncedFilters.priceRange);
+      if (debouncedFilters.type) queryParams.append('type', debouncedFilters.type);
       
       if (queryParams.toString()) {
         url += `?${queryParams.toString()}`;
       }
 
-      console.log('Fetching robots from:', url); // Debug log
+      console.log('Fetching robots from:', url);
       
       const response = await fetch(url);
-      console.log('Response status:', response.status); // Debug log
+      console.log('Response status:', response.status);
       
       const responseText = await response.text();
-      console.log('Raw response:', responseText); // Debug log
+      console.log('Raw response:', responseText);
       
       if (!response.ok) {
         throw new Error(`Failed to fetch robots: ${response.status} ${responseText}`);
@@ -75,7 +90,7 @@ const RobotList = () => {
         throw new Error('Invalid response format from server');
       }
       
-      console.log('Parsed robots data:', data); // Debug log
+      console.log('Parsed robots data:', data);
       
       if (!Array.isArray(data)) {
         console.error('Expected array of robots, got:', typeof data);
@@ -238,6 +253,23 @@ const RobotList = () => {
                   <MenuItem value="5000-10000">$5,000 - $10,000</MenuItem>
                   <MenuItem value="10000-50000">$10,000 - $50,000</MenuItem>
                   <MenuItem value="50000+">$50,000+</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+
+            <Grid item xs={12} sm={6} md={2}>
+              <FormControl fullWidth>
+                <InputLabel>Type</InputLabel>
+                <Select
+                  name="type"
+                  value={filters.type}
+                  onChange={handleFilterChange}
+                  label="Type"
+                >
+                  <MenuItem value="">All</MenuItem>
+                  <MenuItem value="Industrial">Industrial</MenuItem>
+                  <MenuItem value="Service">Service</MenuItem>
+                  <MenuItem value="Autonomous">Autonomous</MenuItem>
                 </Select>
               </FormControl>
             </Grid>

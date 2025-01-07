@@ -35,6 +35,9 @@ router.get('/', async (req, res) => {
     if (req.query.condition) {
       query.condition = req.query.condition;
     }
+    if (req.query.type) {
+      query.type = { $regex: req.query.type, $options: 'i' };
+    }
     if (req.query.priceRange) {
       // Implement price range filtering
       const [min, max] = req.query.priceRange.split('-').map(Number);
